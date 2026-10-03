@@ -97,6 +97,45 @@ def test_vernacular_guidance_generation():
     assert "शेयर" in hi_guide["message"]
     assert "₹45,000" in hi_guide["action_prompt"]
 
+def test_sensitivity_and_swap_insight():
+    ramesh = INVESTOR_PERSONAS["persona_ramesh_high_risk"]
+    metrics = calculate_portfolio_metrics(ramesh["holdings"], ramesh["loan_outstanding"])
+    
+    assert "sensitivity_breakdown" in metrics
+    sb = metrics["sensitivity_breakdown"]
+    assert sb["high_beta_pct"] > 60.0 # Suzlon and Zomato
+    assert sb["high_beta_val"] > 0.0
+
+    assert "swap_insight" in metrics
+    si = metrics["swap_insight"]
+    assert si["target_symbol"] == "SUZLON"
+    assert si["simulated_portfolio_beta"] < metrics["portfolio_beta"]
+    assert si["risk_reduction_pct"] > 20.0
+    assert "Nifty 50" in si["replacement_benchmark"]
+    assert len(si["summary_hi"]) > 0
+    assert len(si["action_hi"]) > 0
+
+def test_calm_mitigation_remedies():
+    ramesh = INVESTOR_PERSONAS["persona_ramesh_high_risk"]
+    remedies = calculate_buffer_remedies(
+        loan_outstanding=ramesh["loan_outstanding"],
+        current_collateral_value=496000.0,
+        portfolio_beta=1.82,
+        maintenance_ltv=0.65
+    )
+    assert "calm_mitigation" in remedies
+    cm = remedies["calm_mitigation"]
+    assert cm["exact_cash_inr"] > 0
+    assert cm["exact_reliance_shares"] > 0
+    assert cm["exact_debt_units"] > 0
+    assert "Stay Calm" in cm["reassurance_en"]
+    assert "घबराएं नहीं" in cm["reassurance_hi"]
+
+    # Also test calm mitigation in simulate_market_shock
+    stress = simulate_market_shock(ramesh["holdings"], ramesh["loan_outstanding"], market_drop_pct=-0.15)
+    assert "calm_mitigation" in stress
+    assert stress["calm_mitigation"]["exact_cash_inr"] > 0
+
 if __name__ == "__main__":
     test_portfolio_metrics_ramesh_high_risk()
     test_portfolio_metrics_sunita_safe()
@@ -104,4 +143,7 @@ if __name__ == "__main__":
     test_buffer_remedies()
     test_ml_vulnerability_predictions()
     test_vernacular_guidance_generation()
-    print("✅ All 6 Risk Engine & ML tests passed successfully!")
+    test_sensitivity_and_swap_insight()
+    test_calm_mitigation_remedies()
+    print("✅ All 8 Risk Engine, Sensitivity, & Calm Mitigation tests passed successfully!")
+

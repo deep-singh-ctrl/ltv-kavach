@@ -42,18 +42,19 @@ def generate_vernacular_guidance(analysis_data: Dict[str, Any], lang: str = "hi"
                 f"सुरक्षा के लिए ₹{round(cash_fix):,} चुकाएं।"
             )
         else: # WARNING_AMBER or CRITICAL_RED
-            title = "अति गंभीर चेतावनी: शेयर बिकने का खतरा! (लाल क्षेत्र)"
+            title = "धैर्य रखें: सुरक्षित मार्जिन बहाली योजना"
             message = (
-                f"खतरा! एलटीवी सीमा पार हो चुकी है ({ltv_pct}%)। बैंक तुरंत आपके गिरवी रखे शेयर "
-                f"बाज़ार में कम कीमत पर बेच सकता है।"
+                f"घबराएं नहीं। आपके गिरवी शेयर सुरक्षित हैं। वर्तमान एलटीवी {ltv_pct}% है। बैंक समय रहते मार्जिन जमा करने की सूचना देते हैं। "
+                f"सुरक्षित हरे क्षेत्र में लौटने के लिए दो सटीक उपाय हैं: या तो ठीक ₹{round(cash_fix):,} का यूपीआई भुगतान करें, "
+                f"अथवा बिना नकद खर्च किए ₹{round(debt_fix):,} के सुरक्षित फंड या शेयर गिरवी रखें।"
             )
             action_prompt = (
-                f"तुरंत ₹{round(cash_fix):,} का बैंक भुगतान करें या ₹{round(debt_fix):,} "
-                f"का सुरक्षित लिक्विड फंड गिरवी रखकर अपने शेयरों को बचाएं।"
+                f"शांतिपूर्वक कदम उठाएं: ठीक ₹{round(cash_fix):,} चुकाएं या "
+                f"बिना नकद खर्च किए एनएसडीएल ओटीपी द्वारा सुरक्षित डेट फंड गिरवी रखकर अपने शेयरों को सुरक्षित करें।"
             )
             speech_text = (
-                f"गंभीर चेतावनी! आपके शेयर बिकने का खतरा है। "
-                f"बैंक को तुरंत ₹{round(cash_fix):,} का भुगतान करें अथवा अतिरिक्त सुरक्षित फंड जोड़ें।"
+                f"घबराएं नहीं। आपके पास सुरक्षित और स्पष्ट विकल्प हैं। "
+                f"मार्जिन बहाली के लिए ठीक ₹{round(cash_fix):,} का भुगतान करें अथवा अतिरिक्त सुरक्षित फंड जोड़ें।"
             )
 
         return {
@@ -90,18 +91,19 @@ def generate_vernacular_guidance(analysis_data: Dict[str, Any], lang: str = "hi"
                 f"will trigger a margin call. Consider adding a small safety buffer."
             )
         else:
-            title = "Critical Alert: Forced Liquidation Risk!"
+            title = "Stay Calm: Safe Margin Restoration Plan"
             message = (
-                f"Danger: Your LTV is {ltv_pct}%, breaching safe limits. The lender is legally entitled "
-                f"to sell off your pledged shares at current market prices."
+                f"Do not panic. Your LTV is {ltv_pct}%. Lenders provide an advance notice window "
+                f"before taking any market action. Restore your safe green buffer by paying exactly ₹{round(cash_fix):,} "
+                f"via UPI/IMPS, or by pledging ₹{round(debt_fix):,} of safe liquid assets via NSDL OTP without spending cash."
             )
             action_prompt = (
-                f"Immediate Action: Pay ₹{round(cash_fix):,} cash or pledge ₹{round(debt_fix):,} "
-                f"of safe liquid securities to prevent distress liquidation."
+                f"Calm Action Plan: Pay exactly ₹{round(cash_fix):,} cash or pledge ₹{round(debt_fix):,} "
+                f"of safe liquid securities to protect your portfolio."
             )
             speech_text = (
-                f"Critical alert! Your pledged portfolio is in the danger zone. "
-                f"To prevent lender liquidation, pay ₹{round(cash_fix):,} immediately or pledge additional collateral."
+                f"Stay calm. You have clear, proven options. "
+                f"To restore your safety margin, pay exactly ₹{round(cash_fix):,} or pledge low-risk debt funds without spending cash."
             )
 
         return {

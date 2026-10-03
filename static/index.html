@@ -321,6 +321,169 @@
 
             </div>
           </div>
+        <!-- STEP 1 CALM THRESHOLD MITIGATION ALERT (Appears when LTV >= 50%) -->
+        <div id="step1CalmBox" class="p-5 rounded-3xl bg-teal-50/70 border border-teal-200/90 shadow-2xs hidden space-y-3">
+          <div class="flex items-start space-x-3.5">
+            <div class="w-8 h-8 rounded-xl bg-white border border-teal-300 flex items-center justify-center text-teal-700 flex-shrink-0 shadow-2xs">
+              <i data-lucide="shield-check" class="w-4 h-4"></i>
+            </div>
+            <div class="flex-1 space-y-2">
+              <div>
+                <h4 class="text-xs font-black uppercase tracking-wider text-teal-900" id="step1CalmHeading">
+                  Stay Calm — Safe Margin Restoration Plan
+                </h4>
+                <p class="text-xs text-slate-700 font-medium leading-relaxed" id="step1CalmReassurance">
+                  Bank notice periods give you time to act. Here are 2 exact ways to restore your safe 45% margin:
+                </p>
+              </div>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+                <div class="p-3.5 bg-white rounded-2xl border border-teal-200 shadow-2xs">
+                  <div class="flex items-center justify-between">
+                    <span class="text-[10px] font-bold uppercase tracking-wider text-teal-800" id="step1Opt1Title">Option 1: Cash Paydown</span>
+                    <span class="text-[9px] font-extrabold px-1.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200" id="step1CashTag">UPI / IMPS</span>
+                  </div>
+                  <div class="text-base font-black text-slate-900 mt-1" id="step1CashVal">₹0</div>
+                  <p class="text-[11px] text-slate-600 mt-0.5" id="step1CashSub">Pay via UPI to restore 45% safe LTV</p>
+                </div>
+                <div class="p-3.5 bg-white rounded-2xl border border-emerald-200 shadow-2xs">
+                  <div class="flex items-center justify-between">
+                    <span class="text-[10px] font-bold uppercase tracking-wider text-emerald-800" id="step1Opt2Title">Option 2: Zero-Cash Pledge</span>
+                    <span class="text-[9px] font-extrabold px-1.5 py-0.5 rounded-full bg-teal-50 text-teal-700 border border-teal-200" id="step1PledgeTag">NSDL OTP</span>
+                  </div>
+                  <div class="text-base font-black text-slate-900 mt-1" id="step1SharesVal">0 Reliance Shares</div>
+                  <p class="text-[11px] text-slate-600 mt-0.5" id="step1SharesSub">Pledge via instant Demat OTP without cash</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- COLLATERAL SENSITIVITY & ACTIONABLE DE-RISKING CARD -->
+        <div class="bg-white border border-slate-200/80 rounded-3xl p-6 sm:p-7 shadow-sm space-y-5">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-3">
+            <div class="flex items-center space-x-2.5">
+              <div class="w-7 h-7 rounded-xl bg-emerald-50 border border-emerald-200 flex items-center justify-center text-emerald-600">
+                <i data-lucide="activity" class="w-4 h-4"></i>
+              </div>
+              <div>
+                <h3 class="text-sm font-bold text-slate-900" id="sensitivityCardTitle">Collateral Sensitivity & Market Volatility</h3>
+                <p class="text-[11px] text-slate-500 font-medium" id="sensitivityCardSub">How sharply your pledged portfolio swings compared to Nifty 50.</p>
+              </div>
+            </div>
+            <div id="portfolioBetaBadge" class="self-start sm:self-auto text-xs font-extrabold px-3 py-1 rounded-full bg-slate-100 text-slate-800 border border-slate-200">
+              Portfolio Beta: 1.00
+            </div>
+          </div>
+
+          <!-- 3-Part Sensitivity Breakdown -->
+          <div class="space-y-2">
+            <div class="flex justify-between items-center text-xs">
+              <span class="font-bold text-slate-700" id="collateralSensitivitySub">Market Exposure Breakdown:</span>
+              <span class="text-[11px] text-slate-400 font-semibold" id="benchmarkRefText">Benchmarked against Nifty 50</span>
+            </div>
+
+            <!-- Segmented Sensitivity Bar -->
+            <div class="h-3.5 w-full rounded-full bg-slate-100 flex overflow-hidden shadow-inner p-0.5 gap-0.5 border border-slate-200/70">
+              <div id="barHighBeta" class="h-full rounded-l-full bg-rose-500 transition-all duration-500" style="width: 33.3%;" title="High Sensitivity"></div>
+              <div id="barModBeta" class="h-full bg-amber-400 transition-all duration-500" style="width: 33.3%;" title="Moderate Sensitivity"></div>
+              <div id="barLowBeta" class="h-full rounded-r-full bg-emerald-500 transition-all duration-500" style="width: 33.4%;" title="Defensive Assets"></div>
+            </div>
+
+            <!-- 3 Category Stat Chips -->
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1 text-xs">
+              <div class="p-3 rounded-2xl bg-surface-50 border border-slate-200/70">
+                <div class="flex items-center justify-between">
+                  <span class="font-bold text-rose-700 flex items-center gap-1.5">
+                    <span class="w-2 h-2 rounded-full bg-rose-500"></span>
+                    <span id="chipHighTitle">High Volatility (>1.3)</span>
+                  </span>
+                  <span id="chipHighPct" class="font-black text-rose-700">0.0%</span>
+                </div>
+                <div class="text-[11px] text-slate-500 mt-1 flex justify-between">
+                  <span id="chipHighTag">Drops 2x faster</span>
+                  <span id="chipHighVal" class="font-semibold text-slate-700">₹0</span>
+                </div>
+              </div>
+
+              <div class="p-3 rounded-2xl bg-surface-50 border border-slate-200/70">
+                <div class="flex items-center justify-between">
+                  <span class="font-bold text-amber-700 flex items-center gap-1.5">
+                    <span class="w-2 h-2 rounded-full bg-amber-500"></span>
+                    <span id="chipModTitle">Moderate (0.8 - 1.3)</span>
+                  </span>
+                  <span id="chipModPct" class="font-black text-amber-700">0.0%</span>
+                </div>
+                <div class="text-[11px] text-slate-500 mt-1 flex justify-between">
+                  <span id="chipModTag">Market-paced</span>
+                  <span id="chipModVal" class="font-semibold text-slate-700">₹0</span>
+                </div>
+              </div>
+
+              <div class="p-3 rounded-2xl bg-surface-50 border border-slate-200/70">
+                <div class="flex items-center justify-between">
+                  <span class="font-bold text-emerald-700 flex items-center gap-1.5">
+                    <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                    <span id="chipLowTitle">Defensive (<0.8)</span>
+                  </span>
+                  <span id="chipLowPct" class="font-black text-emerald-700">0.0%</span>
+                </div>
+                <div class="text-[11px] text-slate-500 mt-1 flex justify-between">
+                  <span id="chipLowTag">Shock absorbent</span>
+                  <span id="chipLowVal" class="font-semibold text-slate-700">₹0</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Dynamic Actionable De-risking Insight Box (Nifty 50 Bluechip Swap) -->
+          <div id="deriskingBox" class="p-4 sm:p-5 rounded-2xl bg-emerald-50/50 border border-emerald-200/90 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div class="space-y-1.5 flex-1">
+              <div class="flex items-center space-x-2">
+                <span class="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-300" id="badgeDeriskTitle">
+                  Actionable De-Risking Insight
+                </span>
+                <span id="riskCutBadge" class="text-[10px] font-extrabold text-emerald-700 bg-white px-2 py-0.5 rounded-full border border-emerald-200 shadow-2xs">
+                  -28% Crash Exposure
+                </span>
+              </div>
+              <p id="deriskSummary" class="text-xs text-slate-700 font-medium leading-relaxed">
+                Loading insight...
+              </p>
+              <p id="deriskAction" class="text-xs text-emerald-900 font-bold leading-relaxed">
+                Loading recommendation...
+              </p>
+            </div>
+            <button id="btnSimulateSwap" onclick="toggleSwapSimulation()" class="flex-shrink-0 px-4 py-2.5 rounded-xl bg-white border border-emerald-300 hover:border-emerald-400 text-emerald-800 hover:bg-emerald-50 text-xs font-bold shadow-2xs transition flex items-center gap-1.5">
+              <i data-lucide="refresh-cw" class="w-3.5 h-3.5 text-emerald-600"></i>
+              <span id="swapBtnText">Simulate Nifty 50 Swap</span>
+            </button>
+          </div>
+
+          <!-- Simulated Swap Impact Banner (Toggled on click) -->
+          <div id="swapSimulationResult" class="p-4 sm:p-5 rounded-2xl bg-slate-900 text-white text-xs hidden space-y-3">
+            <div class="flex items-center justify-between">
+              <span class="font-bold flex items-center gap-1.5 text-emerald-400">
+                <i data-lucide="check-circle" class="w-4 h-4"></i>
+                <span id="swapResultHeader">Simulated Nifty 50 Bluechip Swap Effect:</span>
+              </span>
+              <button onclick="toggleSwapSimulation()" class="text-slate-400 hover:text-white font-bold p-1">✕</button>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1">
+              <div class="p-3 rounded-xl bg-white/10">
+                <span class="text-slate-300 block text-[10px]" id="swapStat1Title">Portfolio Beta:</span>
+                <span class="text-sm font-bold text-white mt-0.5 block" id="swapBetaChange">1.82 ➔ 1.31</span>
+              </div>
+              <div class="p-3 rounded-xl bg-white/10">
+                <span class="text-slate-300 block text-[10px]" id="swapStat2Title">Safety Cushion to Warning:</span>
+                <span class="text-sm font-bold text-emerald-400 mt-0.5 block" id="swapBufferChange">+4.3% extra cushion</span>
+              </div>
+              <div class="p-3 rounded-xl bg-white/10">
+                <span class="text-slate-300 block text-[10px]" id="swapStat3Title">Resilience Status:</span>
+                <span class="text-sm font-bold text-emerald-400 mt-0.5 block" id="swapStatusChange">De-Risked (Survives Routine Dips)</span>
+              </div>
+            </div>
+          </div>
+
         </div>
 
         <!-- INLINE PLEDGED SHARES CARD (Right inside Step 1) -->
@@ -432,6 +595,43 @@
             </div>
           </div>
 
+          <!-- CALM ACTIONABLE THRESHOLD MITIGATION (Appears when market fall breaches margin call) -->
+          <div id="stressMitigationBox" class="p-5 sm:p-6 rounded-3xl bg-teal-50/70 border border-teal-200/90 shadow-2xs mt-4 hidden space-y-3">
+            <div class="flex items-start space-x-3.5">
+              <div class="w-8 h-8 rounded-xl bg-white border border-teal-300 flex items-center justify-center text-teal-700 flex-shrink-0 shadow-2xs">
+                <i data-lucide="shield-check" class="w-4 h-4"></i>
+              </div>
+              <div class="space-y-2 flex-1">
+                <div>
+                  <h4 class="text-xs font-black uppercase tracking-wider text-teal-900" id="stressMitigationTitle">
+                    Stay Calm — Safe Margin Restoration Plan
+                  </h4>
+                  <p class="text-xs text-slate-700 font-medium leading-relaxed" id="stressMitigationReassurance">
+                    Lenders provide advance notice windows before taking any market action. Here are your 2 exact recovery steps:
+                  </p>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+                  <div class="p-3.5 bg-white rounded-2xl border border-teal-200 shadow-2xs">
+                    <div class="flex items-center justify-between">
+                      <span class="text-[10px] font-bold uppercase tracking-wider text-teal-800" id="stressStep1Title">Option 1: Cash Paydown</span>
+                      <span class="text-[9px] font-extrabold px-1.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200" id="stressCashTag">UPI / IMPS</span>
+                    </div>
+                    <div class="text-base font-black text-slate-900 mt-1" id="stressStep1Val">₹0</div>
+                    <p class="text-[11px] text-slate-600 mt-0.5" id="stressStep1Desc">Pay via UPI/IMPS to restore safe 45% LTV</p>
+                  </div>
+                  <div class="p-3.5 bg-white rounded-2xl border border-emerald-200 shadow-2xs">
+                    <div class="flex items-center justify-between">
+                      <span class="text-[10px] font-bold uppercase tracking-wider text-emerald-800" id="stressStep2Title">Option 2: Zero-Cash Pledge</span>
+                      <span class="text-[9px] font-extrabold px-1.5 py-0.5 rounded-full bg-teal-50 text-teal-700 border border-teal-200" id="stressPledgeTag">NSDL OTP</span>
+                    </div>
+                    <div class="text-base font-black text-slate-900 mt-1" id="stressStep2Val">0 Reliance Shares</div>
+                    <p class="text-[11px] text-slate-600 mt-0.5" id="stressStep2Desc">Pledge via instant Demat OTP without cash</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
           <!-- Stepper Buttons -->
           <div class="mt-8 pt-6 border-t border-slate-100 flex justify-between items-center">
             <button onclick="navigateToView('view-health')" class="px-5 py-2.5 rounded-xl bg-surface-100 hover:bg-surface-200 text-slate-700 font-semibold text-xs flex items-center gap-1.5 transition">
@@ -458,19 +658,37 @@
             <p class="text-xs text-slate-500 mt-0.5" id="step3Subtext">Choose one of two simple actions to stop the bank from selling your shares.</p>
           </div>
 
+          <!-- SEBI / NSDL Regulatory Reassurance Banner -->
+          <div class="mt-5 p-4 rounded-2xl bg-surface-50 border border-slate-200/90 flex items-start space-x-3.5 shadow-2xs">
+            <div class="w-8 h-8 rounded-xl bg-white border border-emerald-200 flex items-center justify-center text-emerald-700 flex-shrink-0 shadow-2xs">
+              <i data-lucide="shield" class="w-4 h-4"></i>
+            </div>
+            <div>
+              <h4 class="text-xs font-bold uppercase tracking-wider text-slate-900" id="step3RegulatoryTitle">SEBI & NSDL Regulatory Investor Shield</h4>
+              <p class="text-xs text-slate-600 mt-0.5 leading-relaxed font-medium" id="step3RegulatoryText">Regulations mandate lenders provide written notice before any forced liquidation. You are in control. Choose either exact remedy below to immediately safeguard your pledged shares.</p>
+            </div>
+          </div>
+
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
             
             <!-- Option A: Cash Payment -->
-            <div class="p-6 rounded-2xl border border-emerald-200 bg-emerald-50/30 flex flex-col justify-between shadow-2xs">
+            <div class="p-6 rounded-3xl border border-emerald-200 bg-emerald-50/30 flex flex-col justify-between shadow-2xs">
               <div>
-                <div class="w-9 h-9 rounded-xl bg-emerald-100 text-emerald-800 flex items-center justify-center font-bold text-sm mb-3">
-                  A
+                <div class="flex items-center justify-between mb-3">
+                  <div class="w-9 h-9 rounded-xl bg-emerald-100 text-emerald-800 flex items-center justify-center font-bold text-sm">
+                    A
+                  </div>
+                  <span class="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800" id="opt1Badge">Instant Pay</span>
                 </div>
                 <span class="text-xs font-bold uppercase tracking-wider text-emerald-800" id="opt1Title">Option 1: Pay Small Cash Back</span>
                 <div class="text-3xl font-black text-slate-900 mt-1.5" id="bufferCashVal">₹0</div>
                 <p class="text-xs text-slate-600 mt-2 leading-relaxed" id="bufferCashExplain">
                   Pay to reduce loan balance to safe green zone.
                 </p>
+                <div class="mt-4 p-3 rounded-2xl bg-white/90 border border-emerald-200/80 text-[11px] font-semibold text-slate-700 flex items-center gap-2">
+                  <i data-lucide="smartphone" class="w-3.5 h-3.5 text-emerald-600 flex-shrink-0"></i>
+                  <span id="opt1HowTo">Pay via instant UPI / Net Banking directly to your loan account</span>
+                </div>
               </div>
               <div class="mt-5 pt-3 border-t border-emerald-100 flex items-center gap-2 text-xs font-semibold text-emerald-700">
                 <i data-lucide="check-circle" class="w-4 h-4"></i>
@@ -479,16 +697,33 @@
             </div>
 
             <!-- Option B: Add Safe Collateral -->
-            <div class="p-6 rounded-2xl border border-teal-200 bg-teal-50/30 flex flex-col justify-between shadow-2xs">
+            <div class="p-6 rounded-3xl border border-teal-200 bg-teal-50/30 flex flex-col justify-between shadow-2xs">
               <div>
-                <div class="w-9 h-9 rounded-xl bg-teal-100 text-teal-800 flex items-center justify-center font-bold text-sm mb-3">
-                  B
+                <div class="flex items-center justify-between mb-3">
+                  <div class="w-9 h-9 rounded-xl bg-teal-100 text-teal-800 flex items-center justify-center font-bold text-sm">
+                    B
+                  </div>
+                  <span class="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-teal-100 text-teal-800" id="opt2Badge">Zero Cash</span>
                 </div>
                 <span class="text-xs font-bold uppercase tracking-wider text-teal-800" id="opt2Title">Option 2: Pledge Safe Assets (Zero Cash)</span>
                 <div class="text-3xl font-black text-slate-900 mt-1.5" id="bufferPledgeVal">₹0</div>
                 <p class="text-xs text-slate-600 mt-2 leading-relaxed" id="bufferPledgeExplain">
                   Pledge low-risk Debt Mutual Funds or Bank FDs without spending cash.
                 </p>
+                <div class="mt-4 p-3 rounded-2xl bg-white/90 border border-teal-200/80 text-[11px] font-semibold text-slate-700 space-y-1.5">
+                  <div class="flex items-center justify-between">
+                    <span class="text-slate-500" id="exactSharesLabel">Exact Shares to Pledge:</span>
+                    <b id="exactSharesReliance" class="text-teal-900 font-extrabold">0 Reliance Shares</b>
+                  </div>
+                  <div class="flex items-center justify-between">
+                    <span class="text-slate-500" id="exactDebtUnitsLabel">or Debt Mutual Fund Units:</span>
+                    <b id="exactDebtUnitsVal" class="text-teal-900 font-extrabold">0 Units</b>
+                  </div>
+                </div>
+                <div class="mt-2 text-[11px] text-teal-800 font-semibold flex items-center gap-1.5">
+                  <i data-lucide="key" class="w-3.5 h-3.5 text-teal-600 flex-shrink-0"></i>
+                  <span id="opt2HowTo">Instant NSDL Demat OTP Authorization — Zero Cash Needed</span>
+                </div>
               </div>
               <div class="mt-5 pt-3 border-t border-teal-100 flex items-center gap-2 text-xs font-semibold text-teal-700">
                 <i data-lucide="check-circle" class="w-4 h-4"></i>
@@ -755,7 +990,51 @@
         lblOfficialSms: "Official SMS Alert",
         lblVerifiedWhatsapp: "Verified WhatsApp Alert",
         btnCloseAlert: "Close",
-        vernacularPlayBtn: "Play Advice"
+        vernacularPlayBtn: "Play Advice",
+        // Step 1: Calm Threshold Alert
+        step1CalmHeading: "Stay Calm — Safe Margin Restoration Plan",
+        step1CalmReassurance: "Bank notice periods give you time to act. Here are 2 exact ways to restore your safe 45% margin:",
+        step1Opt1Title: "Option 1: Cash Paydown",
+        step1CashTag: "UPI / IMPS",
+        step1CashSub: "Pay via UPI to restore 45% safe LTV",
+        step1Opt2Title: "Option 2: Zero-Cash Pledge",
+        step1PledgeTag: "NSDL OTP",
+        step1SharesSub: "Pledge via instant Demat OTP without cash",
+        // Step 1: Collateral Sensitivity & De-risking
+        sensitivityCardTitle: "Collateral Sensitivity & Market Volatility",
+        sensitivityCardSub: "How sharply your pledged portfolio swings compared to Nifty 50.",
+        collateralSensitivitySub: "Market Exposure Breakdown:",
+        benchmarkRefText: "Benchmarked against Nifty 50",
+        chipHighTitle: "High Volatility (>1.3)",
+        chipHighTag: "Drops 2x faster",
+        chipModTitle: "Moderate (0.8 - 1.3)",
+        chipModTag: "Market-paced",
+        chipLowTitle: "Defensive (<0.8)",
+        chipLowTag: "Shock absorbent",
+        badgeDeriskTitle: "Actionable De-Risking Insight",
+        swapBtnText: "Simulate Nifty 50 Swap",
+        swapResultHeader: "Simulated Nifty 50 Bluechip Swap Effect:",
+        swapStat1Title: "Portfolio Beta:",
+        swapStat2Title: "Safety Cushion to Warning:",
+        swapStat3Title: "Resilience Status:",
+        // Step 2: Calm Mitigation
+        stressMitigationTitle: "Stay Calm — Safe Margin Restoration Plan",
+        stressMitigationReassurance: "Lenders provide advance notice windows before taking any market action. Here are your 2 exact recovery steps:",
+        stressStep1Title: "Option 1: Cash Paydown",
+        stressCashTag: "UPI / IMPS",
+        stressStep1Desc: "Pay via UPI/IMPS to restore safe 45% LTV",
+        stressStep2Title: "Option 2: Zero-Cash Pledge",
+        stressPledgeTag: "NSDL OTP",
+        stressStep2Desc: "Pledge via instant Demat OTP without cash",
+        // Step 3: Regulatory Reassurance & Remedies
+        step3RegulatoryTitle: "SEBI & NSDL Regulatory Investor Shield",
+        step3RegulatoryText: "Regulations mandate lenders provide written notice before any forced liquidation. You are in control. Choose either exact remedy below to immediately safeguard your pledged shares.",
+        opt1Badge: "Instant Pay",
+        opt1HowTo: "Pay via instant UPI / Net Banking directly to your loan account",
+        opt2Badge: "Zero Cash",
+        exactSharesLabel: "Exact Shares to Pledge:",
+        exactDebtUnitsLabel: "or Debt Mutual Fund Units:",
+        opt2HowTo: "Instant NSDL Demat OTP Authorization — Zero Cash Needed"
       },
       hi: {
         brandTag: "एलटीवी कवच",
@@ -849,7 +1128,51 @@
         lblOfficialSms: "आधिकारिक एसएमएस चेतावनी",
         lblVerifiedWhatsapp: "सत्यापित व्हाट्सएप चेतावनी",
         btnCloseAlert: "बंद करें",
-        vernacularPlayBtn: "आवाज सुनें"
+        vernacularPlayBtn: "आवाज सुनें",
+        // Step 1: Calm Threshold Alert
+        step1CalmHeading: "धैर्य रखें — सुरक्षित मार्जिन बहाली योजना",
+        step1CalmReassurance: "बैंक ज़बरन बिक्री से पहले सूचना देते हैं। अपने पोर्टफोलियो को सुरक्षित रखने के लिए ये २ आसान कदम उठाएं:",
+        step1Opt1Title: "विकल्प १: नकद भुगतान",
+        step1CashTag: "यूपीआई / आईएमपीएस",
+        step1CashSub: "सुरक्षित ४५% एलटीवी के लिए यूपीआई से भुगतान करें",
+        step1Opt2Title: "विकल्प २: बिना नकद शेयर गिरवी",
+        step1PledgeTag: "एनएसडीएल ओटीपी",
+        step1SharesSub: "बिना नकद त्वरित डीमैट ओटीपी द्वारा गिरवी रखें",
+        // Step 1: Collateral Sensitivity & De-risking
+        sensitivityCardTitle: "गिरवी पोर्टफोलियो संवेदनशीलता एवं बाज़ार जोखिम",
+        sensitivityCardSub: "निफ्टी ५० की तुलना में आपके गिरवी शेयरों के उतार-चढ़ाव का विस्तृत विश्लेषण।",
+        collateralSensitivitySub: "बाज़ार संवेदनशीलता विभाजन:",
+        benchmarkRefText: "निफ्टी ५० के आधार पर आकलित",
+        chipHighTitle: "उच्च संवेदनशीलता (>१.३)",
+        chipHighTag: "दोगुनी तेज़ी से गिरता है",
+        chipModTitle: "मध्यम संवेदनशीलता (०.८ - १.३)",
+        chipModTag: "बाज़ार के अनुरूप",
+        chipLowTitle: "सुरक्षित / क्रैश-रोधी (<०.८)",
+        chipLowTag: "क्रैश में सुरक्षित",
+        badgeDeriskTitle: "सटीक जोखिम न्यूनीकरण सुझाव",
+        swapBtnText: "निफ्टी ५० स्वैप सिम्युलेट करें",
+        swapResultHeader: "निफ्टी ५० शेयर स्वैप का सिम्युलेटेड प्रभाव:",
+        swapStat1Title: "पोर्टफोलियो बीटा:",
+        swapStat2Title: "चेतावनी तक सुरक्षा कुशन:",
+        swapStat3Title: "सुरक्षा स्थिति:",
+        // Step 2: Calm Mitigation
+        stressMitigationTitle: "धैर्य रखें — सुरक्षित मार्जिन बहाली योजना",
+        stressMitigationReassurance: "बैंक ज़बरन बिक्री से पहले सूचना देते हैं। अपने पोर्टफोलियो को सुरक्षित रखने के लिए ये २ आसान कदम उठाएं:",
+        stressStep1Title: "विकल्प १: नकद भुगतान",
+        stressCashTag: "यूपीआई / आईएमपीएस",
+        stressStep1Desc: "सुरक्षित ४५% एलटीवी के लिए यूपीआई/आईएमपीएस से भुगतान करें",
+        stressStep2Title: "विकल्प २: बिना नकद शेयर गिरवी",
+        stressPledgeTag: "एनएसडीएल ओटीपी",
+        stressStep2Desc: "बिना नकद त्वरित डीमैट ओटीपी द्वारा गिरवी रखें",
+        // Step 3: Regulatory Reassurance & Remedies
+        step3RegulatoryTitle: "सेबी एवं एनएसडीएल विनियामक सुरक्षा कवच",
+        step3RegulatoryText: "नियमों के तहत बैंक बिना पूर्व सूचना के शेयर नहीं बेच सकते। आप पूरी तरह सुरक्षित हैं। अपने गिरवी शेयरों की सुरक्षा के लिए नीचे दिए गए दो सटीक उपायों में से कोई एक चुनें।",
+        opt1Badge: "त्वरित भुगतान",
+        opt1HowTo: "लोन खाते में त्वरित यूपीआई / नेट बैंकिंग द्वारा भुगतान करें",
+        opt2Badge: "बिना नकद",
+        exactSharesLabel: "गिरवी रखने हेतु सटीक शेयर संख्या:",
+        exactDebtUnitsLabel: "अथवा डेट म्यूचुअल फंड यूनिट्स:",
+        opt2HowTo: "त्वरित एनएसडीएल डीमैट ओटीपी प्रमाणीकरण — शून्य नकद आवश्यक"
       }
     };
 
@@ -1178,6 +1501,82 @@
       const gradeText = gradeMap[ml.risk_grade] || ml.risk_grade;
       document.getElementById('healthVulnerabilityBadge').innerText = `${ml.vulnerability_score}/100 (${gradeText})`;
 
+      // ========================================================
+      // 1. STEP 1 CALM THRESHOLD MITIGATION ALERT (LTV >= 50%)
+      // ========================================================
+      const calmBox = document.getElementById('step1CalmBox');
+      const cm = r.calm_mitigation || {};
+      if (m.current_ltv_pct >= 50.0 || cm.is_breached) {
+        if (calmBox) calmBox.classList.remove('hidden');
+        const exactCash = cm.exact_cash_inr || Math.round(r.cash_prepayment_remedy.amount_inr);
+        document.getElementById('step1CashVal').innerText = `₹${exactCash.toLocaleString('en-IN')}`;
+        const relShares = cm.exact_reliance_shares || (r.pledge_collateral_remedy && r.pledge_collateral_remedy.exact_reliance_shares) || 0;
+        document.getElementById('step1SharesVal').innerText = currentLang === 'hi' 
+          ? `${relShares} रिलायंस शेयर` 
+          : `${relShares} Reliance Shares`;
+      } else {
+        if (calmBox) calmBox.classList.add('hidden');
+      }
+
+      // ========================================================
+      // 2. COLLATERAL SENSITIVITY BREAKDOWN & EXPOSURE
+      // ========================================================
+      const betaVal = m.portfolio_beta || 1.0;
+      const betaBadge = document.getElementById('portfolioBetaBadge');
+      if (betaBadge) {
+        const betaDesc = betaVal > 1.3 
+          ? (currentLang === 'hi' ? `उच्च संवेदनशीलता (${betaVal})` : `High Volatility (${betaVal})`)
+          : (betaVal < 0.8 
+            ? (currentLang === 'hi' ? `सुरक्षित / क्रैश-रोधी (${betaVal})` : `Defensive (${betaVal})`)
+            : (currentLang === 'hi' ? `मध्यम (${betaVal})` : `Moderate (${betaVal})`));
+        betaBadge.innerText = `${currentLang === 'hi' ? 'पोर्टफोलियो बीटा: ' : 'Portfolio Beta: '} ${betaDesc}`;
+        betaBadge.className = betaVal > 1.3
+          ? "self-start sm:self-auto text-xs font-extrabold px-3 py-1 rounded-full bg-rose-50 text-rose-700 border border-rose-200"
+          : (betaVal < 0.8 
+            ? "self-start sm:self-auto text-xs font-extrabold px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200"
+            : "self-start sm:self-auto text-xs font-extrabold px-3 py-1 rounded-full bg-amber-50 text-amber-700 border border-amber-200");
+      }
+
+      const sb = m.sensitivity_breakdown || { high_beta_pct: 0, mod_beta_pct: 0, low_beta_pct: 0, high_beta_val: 0, mod_beta_val: 0, low_beta_val: 0 };
+      const barH = document.getElementById('barHighBeta');
+      const barM = document.getElementById('barModBeta');
+      const barL = document.getElementById('barLowBeta');
+      if (barH) barH.style.width = `${sb.high_beta_pct}%`;
+      if (barM) barM.style.width = `${sb.mod_beta_pct}%`;
+      if (barL) barL.style.width = `${sb.low_beta_pct}%`;
+
+      document.getElementById('chipHighPct').innerText = `${sb.high_beta_pct}%`;
+      document.getElementById('chipHighVal').innerText = `₹${Math.round(sb.high_beta_val || 0).toLocaleString('en-IN')}`;
+
+      document.getElementById('chipModPct').innerText = `${sb.mod_beta_pct}%`;
+      document.getElementById('chipModVal').innerText = `₹${Math.round(sb.mod_beta_val || 0).toLocaleString('en-IN')}`;
+
+      document.getElementById('chipLowPct').innerText = `${sb.low_beta_pct}%`;
+      document.getElementById('chipLowVal').innerText = `₹${Math.round(sb.low_beta_val || 0).toLocaleString('en-IN')}`;
+
+      // ========================================================
+      // 3. ACTIONABLE DE-RISKING INSIGHT (NIFTY 50 SWAP)
+      // ========================================================
+      const si = m.swap_insight;
+      if (si) {
+        document.getElementById('deriskSummary').innerText = currentLang === 'hi' ? si.summary_hi : si.summary_en;
+        document.getElementById('deriskAction').innerText = currentLang === 'hi' ? si.action_hi : si.action_en;
+        const cutBadge = document.getElementById('riskCutBadge');
+        if (cutBadge) {
+          cutBadge.innerText = si.risk_reduction_pct > 0 
+            ? (currentLang === 'hi' ? `-${si.risk_reduction_pct}% क्रैश संवेदनशीलता` : `-${si.risk_reduction_pct}% Crash Exposure`)
+            : (currentLang === 'hi' ? "पोर्टफोलियो स्थिर" : "Portfolio Stable");
+        }
+        
+        document.getElementById('swapBetaChange').innerText = `${si.current_portfolio_beta} ➔ ${si.simulated_portfolio_beta}`;
+        document.getElementById('swapBufferChange').innerText = currentLang === 'hi' 
+          ? `+${Math.round(si.risk_reduction_pct * 0.15)}% अतिरिक्त मार्जिन कुशन` 
+          : `+${Math.round(si.risk_reduction_pct * 0.15)}% extra margin cushion`;
+        document.getElementById('swapStatusChange').innerText = currentLang === 'hi' 
+          ? "जोखिम मुक्त (सामान्य गिरावट सहन करने में सक्षम)" 
+          : "De-Risked (Survives Routine Dips)";
+      }
+
       // Buffer Remedies
       document.getElementById('bufferCashVal').innerText = `₹${Math.round(r.cash_prepayment_remedy.amount_inr).toLocaleString('en-IN')}`;
       document.getElementById('bufferPledgeVal').innerText = `₹${Math.round(r.pledge_collateral_remedy.amount_inr).toLocaleString('en-IN')}`;
@@ -1188,6 +1587,22 @@
       } else {
         document.getElementById('bufferCashExplain').innerText = `Pay ₹${Math.round(r.cash_prepayment_remedy.amount_inr).toLocaleString('en-IN')} to the bank to bring your loan into the safe green zone.`;
         document.getElementById('bufferPledgeExplain').innerText = `Pledge ₹${Math.round(r.pledge_collateral_remedy.amount_inr).toLocaleString('en-IN')} of low-risk Debt Mutual Funds or Bank FDs to absorb shocks without spending any cash.`;
+      }
+
+      // Step 3 Exact Shares and Debt Units
+      const relianceShares = (cm && cm.exact_reliance_shares) || (r.pledge_collateral_remedy && r.pledge_collateral_remedy.exact_reliance_shares) || 0;
+      const debtUnits = (cm && cm.exact_debt_units) || (r.pledge_collateral_remedy && r.pledge_collateral_remedy.exact_debt_units) || 0;
+      const exactSharesEl = document.getElementById('exactSharesReliance');
+      if (exactSharesEl) {
+        exactSharesEl.innerText = currentLang === 'hi' 
+          ? `ठीक ${relianceShares} रिलायंस शेयर` 
+          : `Exactly ${relianceShares} Reliance Shares`;
+      }
+      const debtUnitsEl = document.getElementById('exactDebtUnitsVal');
+      if (debtUnitsEl) {
+        debtUnitsEl.innerText = currentLang === 'hi'
+          ? `ठीक ${debtUnits.toLocaleString('en-IN')} यूनिट्स`
+          : `Exactly ${debtUnits.toLocaleString('en-IN')} Units`;
       }
 
       // Inline Pledged Holdings
@@ -1226,6 +1641,14 @@
         updateVernacularText(data.vernacular[currentLang]);
       }
       loadAlertPayload();
+      lucide.createIcons();
+    }
+
+    function toggleSwapSimulation() {
+      const resEl = document.getElementById('swapSimulationResult');
+      if (!resEl) return;
+      resEl.classList.toggle('hidden');
+      lucide.createIcons();
     }
 
     function updateVernacularText(v) {
@@ -1296,6 +1719,21 @@
           st.className = "text-base font-black text-emerald-600";
           dt.innerText = currentLang === 'hi' ? "किसी कार्रवाई की आवश्यकता नहीं" : "No action needed";
         }
+
+        // Calm Threshold Mitigation in Step 2 Simulator
+        const stressBox = document.getElementById('stressMitigationBox');
+        if (sim.calm_mitigation && (sim.margin_call_breached || sim.liquidation_breached)) {
+          if (stressBox) {
+            stressBox.classList.remove('hidden');
+            document.getElementById('stressStep1Val').innerText = `₹${sim.calm_mitigation.exact_cash_inr.toLocaleString('en-IN')}`;
+            document.getElementById('stressStep2Val').innerText = currentLang === 'hi'
+              ? `${sim.calm_mitigation.exact_reliance_shares} रिलायंस शेयर`
+              : `${sim.calm_mitigation.exact_reliance_shares} Reliance Shares`;
+          }
+        } else {
+          if (stressBox) stressBox.classList.add('hidden');
+        }
+        lucide.createIcons();
       } catch (e) {
         console.error(e);
       }

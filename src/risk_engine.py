@@ -112,6 +112,70 @@ def calculate_portfolio_metrics(
     else:
         concentration_risk = "WELL_DIVERSIFIED"
 
+    # Collateral Sensitivity Breakdown
+    high_beta_val = 0.0
+    mod_beta_val = 0.0
+    low_beta_val = 0.0
+    highest_beta_item = None
+    max_beta_val = -1.0
+
+    for item in enriched_holdings:
+        b = item["beta"]
+        val = item["current_value"]
+        if b > 1.3:
+            high_beta_val += val
+        elif b >= 0.8:
+            mod_beta_val += val
+        else:
+            low_beta_val += val
+
+        if b > max_beta_val:
+            max_beta_val = b
+            highest_beta_item = item
+
+    high_beta_pct = round((high_beta_val / total_collateral_value) * 100.0, 1)
+    mod_beta_pct = round((mod_beta_val / total_collateral_value) * 100.0, 1)
+    low_beta_pct = round((low_beta_val / total_collateral_value) * 100.0, 1)
+
+    # Actionable De-risking Swap Insight (e.g. swapping highest-beta stock with Nifty 50 bluechip)
+    if highest_beta_item and highest_beta_item["beta"] > 1.15 and total_collateral_value > 0:
+        weight_to_swap = highest_beta_item["current_value"] / total_collateral_value
+        beta_saving = (highest_beta_item["beta"] - 0.95) * weight_to_swap
+        sim_new_beta = round(max(0.40, portfolio_beta - beta_saving), 2)
+        risk_reduction = round(((portfolio_beta - sim_new_beta) / max(portfolio_beta, 0.01)) * 100.0, 1)
+
+        swap_insight = {
+            "target_symbol": highest_beta_item["symbol"],
+            "target_name": highest_beta_item["name"],
+            "target_beta": highest_beta_item["beta"],
+            "target_val": round(highest_beta_item["current_value"]),
+            "replacement_benchmark": "Nifty 50 Bluechip (e.g. Reliance / HDFC Bank)",
+            "replacement_beta": 0.95,
+            "current_portfolio_beta": portfolio_beta,
+            "simulated_portfolio_beta": sim_new_beta,
+            "risk_reduction_pct": risk_reduction,
+            "summary_en": f"Your LTV is {round(current_ltv * 100.0, 1)}%, but {high_beta_pct}% of your collateral is concentrated in high-sensitivity stocks that drop significantly faster than the market.",
+            "summary_hi": f"आपका एलटीवी {round(current_ltv * 100.0, 1)}% है, लेकिन आपका {high_beta_pct}% गिरवी शेयर उच्च-संवेदनशीलता वाले शेयरों में है जो बाज़ार से दोगुनी तेज़ी से गिरते हैं।",
+            "action_en": f"Actionable Tip: Swapping your high-beta holding ({highest_beta_item['symbol']}, Beta {highest_beta_item['beta']}) with a Nifty 50 bluechip lowers portfolio beta from {portfolio_beta} to {sim_new_beta} ({risk_reduction}% safer).",
+            "action_hi": f"सुझाव: अपने उच्च-संवेदनशील शेयर ({highest_beta_item['symbol']}, बीटा {highest_beta_item['beta']}) को निफ्टी ५० शेयर से बदलने पर पोर्टफोलियो बीटा {portfolio_beta} से घटकर {sim_new_beta} हो जाएगा ({risk_reduction}% कम जोखिम)।"
+        }
+    else:
+        swap_insight = {
+            "target_symbol": "Portfolio Stable",
+            "target_name": "Well Balanced",
+            "target_beta": portfolio_beta,
+            "target_val": 0,
+            "replacement_benchmark": "Debt Mutual Fund / Large Cap",
+            "replacement_beta": 0.85,
+            "current_portfolio_beta": portfolio_beta,
+            "simulated_portfolio_beta": portfolio_beta,
+            "risk_reduction_pct": 0.0,
+            "summary_en": f"Your LTV is {round(current_ltv * 100.0, 1)}% with balanced sensitivity ({low_beta_pct}% low-risk assets).",
+            "summary_hi": f"आपका एलटीवी {round(current_ltv * 100.0, 1)}% है और पोर्टफोलियो संवेदनशीलता संतुलित है ({low_beta_pct}% सुरक्षित संपत्तियां)।",
+            "action_en": "Your pledged assets have low-to-moderate sensitivity. Maintain your regular repayment schedule.",
+            "action_hi": "आपके गिरवी शेयर संतुलित हैं। नियमित पुनर्भुगतान बनाए रखें।"
+        }
+
     return {
         "loan_outstanding": loan_outstanding,
         "total_collateral_value": round(total_collateral_value, 2),
@@ -131,6 +195,15 @@ def calculate_portfolio_metrics(
         "collateral_loss_to_liquidation": collateral_loss_to_liquidation,
         "status_zone": status_zone,
         "status_label": status_label,
+        "sensitivity_breakdown": {
+            "high_beta_pct": high_beta_pct,
+            "mod_beta_pct": mod_beta_pct,
+            "low_beta_pct": low_beta_pct,
+            "high_beta_val": round(high_beta_val, 2),
+            "mod_beta_val": round(mod_beta_val, 2),
+            "low_beta_val": round(low_beta_val, 2)
+        },
+        "swap_insight": swap_insight,
         "holdings": enriched_holdings
     }
 
@@ -197,6 +270,14 @@ def simulate_market_shock(
             liquidation_dump_amount = max(0.0, excess_debt / (1.0 - target))
             liquidation_dump_amount = min(liquidation_dump_amount, simulated_collateral_value)
 
+    simulated_remedies = calculate_buffer_remedies(
+        loan_outstanding=loan_outstanding,
+        current_collateral_value=simulated_collateral_value,
+        portfolio_beta=base_metrics.get("portfolio_beta", 1.0),
+        maintenance_ltv=maintenance_ltv,
+        safe_target_ltv=safe_target_ltv
+    )
+
     return {
         "market_drop_pct": round(market_drop_pct * 100.0, 2),
         "original_collateral_value": base_metrics["total_collateral_value"],
@@ -210,6 +291,7 @@ def simulate_market_shock(
         "margin_call_breached": simulated_ltv >= maintenance_ltv,
         "liquidation_breached": simulated_ltv >= liquidation_ltv,
         "liquidation_dump_amount": round(liquidation_dump_amount, 2),
+        "calm_mitigation": simulated_remedies["calm_mitigation"],
         "holdings": simulated_holdings
     }
 
@@ -245,6 +327,28 @@ def calculate_buffer_remedies(
     max_safe_debt_for_crash = post_crash_value * maintenance_ltv
     crashproof_cash_buffer = max(0.0, loan_outstanding - max_safe_debt_for_crash)
 
+    # Exact shares calculation for pledge remedy
+    reliance_units = int(math.ceil(additional_collateral_needed / 1167.7)) if additional_collateral_needed > 0 else 0
+    tcs_units = int(math.ceil(additional_collateral_needed / 2075.0)) if additional_collateral_needed > 0 else 0
+    debt_fund_units = int(math.ceil(additional_collateral_needed / 32.4)) if additional_collateral_needed > 0 else 0
+
+    is_breached = current_ltv >= maintenance_ltv
+
+    calm_mitigation = {
+        "is_breached": is_breached,
+        "exact_cash_inr": round(cash_paydown_needed),
+        "exact_reliance_shares": reliance_units,
+        "exact_tcs_shares": tcs_units,
+        "exact_debt_units": debt_fund_units,
+        "exact_collateral_val": round(additional_collateral_needed),
+        "reassurance_en": "Stay Calm. You have clear, proven options. Lenders provide an advance notice window before taking any market action. Follow these 2 exact steps to immediately restore your safe margin:",
+        "reassurance_hi": "घबराएं नहीं। आपके पास सुरक्षित और स्पष्ट विकल्प हैं। बैंक ज़बरन बिक्री से पहले सूचना देते हैं। अपने पोर्टफोलियो को सुरक्षित रखने के लिए ये २ आसान कदम उठाएं:",
+        "step1_en": f"Option 1 (Cash): Pay exactly ₹{round(cash_paydown_needed):,} via UPI/IMPS directly to your loan account to restore your LTV to {safe_target_ltv*100}%.",
+        "step1_hi": f"विकल्प १ (नकद): सुरक्षित {safe_target_ltv*100}% एलटीवी पर लौटने के लिए अपने लोन खाते में ठीक ₹{round(cash_paydown_needed):,} का यूपीआई/आईएमपीएस द्वारा भुगतान करें।",
+        "step2_en": f"Option 2 (Zero Cash): Pledge just {reliance_units} shares of Reliance (or ₹{round(additional_collateral_needed):,} in Debt Mutual Funds) via instant NSDL OTP—zero cash required.",
+        "step2_hi": f"विकल्प २ (बिना नकद): बिना एक भी रुपया खर्च किए केवल {reliance_units} रिलायंस शेयर (या ₹{round(additional_collateral_needed):,} का डेट म्यूचुअल फंड) त्वरित एनएसडीएल ओटीपी द्वारा गिरवी रखें।"
+    }
+
     return {
         "current_ltv_pct": round(current_ltv * 100.0, 2),
         "safe_target_ltv_pct": round(safe_target_ltv * 100.0, 2),
@@ -256,14 +360,18 @@ def calculate_buffer_remedies(
         "pledge_collateral_remedy": {
             "amount_inr": round(additional_collateral_needed, 2),
             "recommended_asset_type": "Debt Mutual Fund / Liquid ETF / Bank FD",
+            "exact_reliance_shares": reliance_units,
+            "exact_tcs_shares": tcs_units,
+            "exact_debt_units": debt_fund_units,
             "result_ltv_pct": safe_target_ltv * 100.0,
-            "explanation": f"Pledge ₹{round(additional_collateral_needed):,} of safe, low-volatility debt funds as extra security without paying any cash."
+            "explanation": f"Pledge just {reliance_units} shares of Reliance or ₹{round(additional_collateral_needed):,} of safe debt funds via NSDL OTP without paying any cash."
         },
         "crashproof_20pct_remedy": {
             "amount_inr": round(crashproof_cash_buffer, 2),
             "tested_drop_pct": round(expected_crash_drop * 100.0, 1),
             "explanation": f"To guarantee you NEVER get a margin call even if the market drops {round(expected_crash_drop*100, 1)}%, keep a liquidity reserve of ₹{round(crashproof_cash_buffer):,}."
-        }
+        },
+        "calm_mitigation": calm_mitigation
     }
 
 def simulate_pre_loan_sandbox(
