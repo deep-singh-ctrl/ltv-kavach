@@ -71,7 +71,7 @@
               <span class="text-lg font-bold tracking-tight text-slate-900">
                 LTV-Kavach
               </span>
-              <span class="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
+              <span id="brandTag" class="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
                 एलटीवी कवच
               </span>
             </div>
@@ -105,17 +105,17 @@
         </span>
 
         <button onclick="navigateToView('view-health')" id="nav_health" class="nav-item w-full flex items-center space-x-3 px-3.5 py-3 rounded-xl text-xs font-bold bg-emerald-600 text-white shadow-sm transition">
-          <div class="w-5 h-5 rounded-full bg-white/20 flex items-center justify-center text-[11px]">1</div>
+          <div id="navNum1" class="w-5 h-5 rounded-full bg-white/20 flex items-center justify-center text-[11px]">1</div>
           <span id="navHealthText">Loan Health Check</span>
         </button>
 
         <button onclick="navigateToView('view-stress')" id="nav_stress" class="nav-item w-full flex items-center space-x-3 px-3.5 py-3 rounded-xl text-xs font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-100/80 transition">
-          <div class="w-5 h-5 rounded-full bg-slate-200 text-slate-700 flex items-center justify-center text-[11px]">2</div>
+          <div id="navNum2" class="w-5 h-5 rounded-full bg-slate-200 text-slate-700 flex items-center justify-center text-[11px]">2</div>
           <span id="navStressText">Market Crash Test</span>
         </button>
 
         <button onclick="navigateToView('view-buffer')" id="nav_buffer" class="nav-item w-full flex items-center space-x-3 px-3.5 py-3 rounded-xl text-xs font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-100/80 transition">
-          <div class="w-5 h-5 rounded-full bg-slate-200 text-slate-700 flex items-center justify-center text-[11px]">3</div>
+          <div id="navNum3" class="w-5 h-5 rounded-full bg-slate-200 text-slate-700 flex items-center justify-center text-[11px]">3</div>
           <span id="navBufferText">Safety Shield Plan</span>
         </button>
       </nav>
@@ -267,21 +267,21 @@
                     <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
                     <span id="legendSafe">Safe</span>
                   </div>
-                  <div class="text-[10px] text-slate-500 mt-0.5">&lt; 50% LTV</div>
+                  <div class="text-[10px] text-slate-500 mt-0.5" id="legendSafeSub">&lt; 50% LTV</div>
                 </div>
                 <div class="p-2 rounded-xl bg-white border border-slate-200/60 shadow-2xs">
                   <div class="flex items-center justify-center gap-1 text-[11px] font-bold text-amber-700">
                     <span class="w-2 h-2 rounded-full bg-amber-500"></span>
                     <span id="legendWarning">Warning</span>
                   </div>
-                  <div class="text-[10px] text-slate-500 mt-0.5">50% - 65%</div>
+                  <div class="text-[10px] text-slate-500 mt-0.5" id="legendWarningSub">50% - 65%</div>
                 </div>
                 <div class="p-2 rounded-xl bg-white border border-slate-200/60 shadow-2xs">
                   <div class="flex items-center justify-center gap-1 text-[11px] font-bold text-rose-700">
                     <span class="w-2 h-2 rounded-full bg-rose-500"></span>
                     <span id="legendSellRisk">Sell Risk</span>
                   </div>
-                  <div class="text-[10px] text-slate-500 mt-0.5">&gt; 65% LTV</div>
+                  <div class="text-[10px] text-slate-500 mt-0.5" id="legendSellRiskSub">&gt; 65% LTV</div>
                 </div>
               </div>
 
@@ -375,13 +375,13 @@
             </div>
             <div class="flex items-center gap-1.5">
               <span class="text-xs text-slate-500 mr-1 hidden sm:inline" id="tryLabel">Try:</span>
-              <button onclick="setStressDrop(-0.06)" class="px-2.5 py-1 rounded-lg bg-surface-100 hover:bg-surface-200 text-slate-700 text-xs font-semibold transition">
+              <button onclick="setStressDrop(-0.06)" class="px-2.5 py-1 rounded-lg bg-surface-100 hover:bg-surface-200 text-slate-700 text-xs font-semibold transition" id="btnPreset1">
                 June 4 (-6%)
               </button>
-              <button onclick="setStressDrop(-0.12)" class="px-2.5 py-1 rounded-lg bg-surface-100 hover:bg-surface-200 text-slate-700 text-xs font-semibold transition">
+              <button onclick="setStressDrop(-0.12)" class="px-2.5 py-1 rounded-lg bg-surface-100 hover:bg-surface-200 text-slate-700 text-xs font-semibold transition" id="btnPreset2">
                 Correction (-12%)
               </button>
-              <button onclick="setStressDrop(-0.25)" class="px-2.5 py-1 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-700 text-xs font-bold transition">
+              <button onclick="setStressDrop(-0.25)" class="px-2.5 py-1 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-700 text-xs font-bold transition" id="btnPreset3">
                 Crash (-25%)
               </button>
             </div>
@@ -583,11 +583,11 @@
 
       <!-- CSV PASTE MODE -->
       <div id="builderCsvSection" class="space-y-2 hidden">
-        <label class="block text-xs font-bold text-slate-700">
-          Paste CSV Rows <span class="text-slate-400 font-normal">(Format: Symbol, Units)</span>:
+        <label class="block text-xs font-bold text-slate-700" id="lblCsvPaste">
+          Paste CSV Rows (Format: Symbol, Units):
         </label>
         <textarea id="cpCsvText" rows="5" class="w-full px-3 py-2 bg-surface-50 border border-slate-200 rounded-xl font-mono text-xs text-slate-800" placeholder="EICHERMOT, 50&#10;RELIANCE, 100&#10;TCS, 50"></textarea>
-        <button onclick="parseAndLoadCsv()" class="px-3.5 py-1.5 rounded-lg bg-surface-100 hover:bg-surface-200 text-slate-800 text-xs font-bold transition">
+        <button onclick="parseAndLoadCsv()" class="px-3.5 py-1.5 rounded-lg bg-surface-100 hover:bg-surface-200 text-slate-800 text-xs font-bold transition" id="btnParseCsv">
           Parse & Fetch Live NSE Quotes
         </button>
       </div>
@@ -634,11 +634,11 @@
 
       <div class="space-y-3">
         <div class="p-4 rounded-xl bg-surface-50 border border-slate-200">
-          <span class="text-[10px] font-bold text-emerald-700 uppercase block mb-1">Official SMS Alert</span>
+          <span class="text-[10px] font-bold text-emerald-700 uppercase block mb-1" id="lblOfficialSms">Official SMS Alert</span>
           <p id="modalSms" class="text-xs text-slate-800 font-mono leading-relaxed">Loading SMS...</p>
         </div>
         <div class="p-4 rounded-xl bg-emerald-50/50 border border-emerald-200">
-          <span class="text-[10px] font-bold text-emerald-800 uppercase block mb-1">Verified WhatsApp Alert</span>
+          <span class="text-[10px] font-bold text-emerald-800 uppercase block mb-1" id="lblVerifiedWhatsapp">Verified WhatsApp Alert</span>
           <p id="modalWhatsapp" class="text-xs text-slate-800 whitespace-pre-line leading-relaxed">Loading WhatsApp...</p>
         </div>
       </div>
@@ -664,10 +664,14 @@
     // COMPLETE I18N DICTIONARY FOR FULL TEXT TOGGLE
     const I18N = {
       en: {
+        brandTag: "Collateral Shield",
         brandSubtitle: "SEBI • NSDL SANGYAN 2026",
         profilesHeaderTitle: "Profiles",
         newProfileBtnText: "+ New Profile",
         journeyNavTitle: "Simple 3-Step Journey",
+        navNum1: "1",
+        navNum2: "2",
+        navNum3: "3",
         navHealthText: "Loan Health Check",
         navStressText: "Market Crash Test",
         navBufferText: "Safety Shield Plan",
@@ -679,15 +683,20 @@
         step1Heading: "Loan Health & Safety Meter",
         step2Heading: "Market Crash Test",
         step3Heading: "Safety Shield Plan",
-        crumb1: "1. Health",
-        crumb2: "2. Crash Test",
-        crumb3: "3. Safety Plan",
+        crumb_1: "1. Health",
+        crumb_2: "2. Crash Test",
+        crumb_3: "3. Safety Plan",
+        vernacularHeading: "Current Portfolio Health",
         step1Header: "How safe is your loan today?",
         step1Subtext: "Calculated from your pledged stocks against bank margin rules.",
         ltvRatioLabel: "Current LTV Ratio",
-        legendSafe: "Safe (<50%)",
+        healthLtvStatus: "of collateral borrowed",
+        legendSafe: "Safe",
         legendWarning: "Warning",
-        legendSellRisk: "Sell Risk (>75%)",
+        legendSellRisk: "Sell Risk",
+        legendSafeSub: "< 50% LTV",
+        legendWarningSub: "50% - 65%",
+        legendSellRiskSub: "> 65% LTV",
         bufferCardTitle: "Buffer Before Bank Warning",
         collateralLabel: "Pledged Collateral:",
         loanBorrowedLabel: "Loan Borrowed:",
@@ -703,6 +712,9 @@
         step2Header: "What if the market falls tomorrow?",
         step2Subtext: "Drag the slider to test market dips on your pledged portfolio.",
         tryLabel: "Try:",
+        btnPreset1: "June 4 (-6%)",
+        btnPreset2: "Correction (-12%)",
+        btnPreset3: "Crash (-25%)",
         simFallLabel: "Simulated Market Fall:",
         tick0: "0% (Normal)",
         tick1: "-10% (Routine Dip)",
@@ -726,27 +738,37 @@
         step3ResetBtn: "Back to Health Summary",
         modalCreateTitle: "Create New Portfolio (Live NSE)",
         modalCreateSub: "Build your portfolio with live market prices or import from a statement.",
+        modeInteractiveBtn: "Interactive Stock Search",
+        modeCsvBtn: "Paste CSV / Statement",
         lblProfileName: "Profile Name:",
         lblBorrowerName: "Borrower Name:",
         lblLoanAmount: "Loan Amount Borrowed (₹):",
         lblHoldingsLive: "Pledged Holdings (Live NSE):",
         btnAddStock: "+ Add Stock",
+        lblCsvPaste: "Paste CSV Rows (Format: Symbol, Units):",
+        btnParseCsv: "Parse & Fetch Live NSE Quotes",
         lblTotalCollateral: "Total Collateral Value:",
         lblEstimatedLtv: "Estimated LTV:",
         btnCancelProfile: "Cancel",
         btnSaveProfile: "Save Profile & View Dashboard",
         modalAlertTitle: "NSDL Depository Alert Preview",
+        lblOfficialSms: "Official SMS Alert",
+        lblVerifiedWhatsapp: "Verified WhatsApp Alert",
         btnCloseAlert: "Close",
-        vernacularPlayBtn: "Play"
+        vernacularPlayBtn: "Play Advice"
       },
       hi: {
+        brandTag: "एलटीवी कवच",
         brandSubtitle: "सेबी • एनएसडीएल संज्ञान २०२६",
         profilesHeaderTitle: "प्रोफ़ाइल",
         newProfileBtnText: "+ नई प्रोफ़ाइल",
         journeyNavTitle: "सरल ३-चरणीय प्रक्रिया",
-        navHealthText: "१. लोन स्वास्थ्य जाँच",
-        navStressText: "२. बाज़ार क्रैश टेस्ट",
-        navBufferText: "३. सुरक्षा शील्ड योजना",
+        navNum1: "१",
+        navNum2: "२",
+        navNum3: "३",
+        navHealthText: "लोन स्वास्थ्य जाँच",
+        navStressText: "बाज़ार क्रैश टेस्ट",
+        navBufferText: "सुरक्षा शील्ड योजना",
         voiceBtnLabel: "ध्वनि में सुनें",
         langSwitchLabel: "भाषा:",
         step1Indicator: "चरण १ / ३",
@@ -755,15 +777,20 @@
         step1Heading: "लोन स्वास्थ्य एवं सुरक्षा मीटर",
         step2Heading: "बाज़ार क्रैश टेस्ट",
         step3Heading: "सुरक्षा शील्ड योजना",
-        crumb1: "१. स्वास्थ्य",
-        crumb2: "२. क्रैश टेस्ट",
-        crumb3: "३. सुरक्षा योजना",
+        crumb_1: "१. स्वास्थ्य",
+        crumb_2: "२. क्रैश टेस्ट",
+        crumb_3: "३. सुरक्षा योजना",
+        vernacularHeading: "वर्तमान पोर्टफोलियो स्थिति",
         step1Header: "आज आपका लोन कितना सुरक्षित है?",
         step1Subtext: "बैंक मार्जिन नियमों के अनुसार आपके गिरवी शेयरों से गणना की गई।",
         ltvRatioLabel: "वर्तमान एलटीवी अनुपात",
-        legendSafe: "सुरक्षित (<५०%)",
-        legendWarning: "चेतावनी (५०-६५%)",
-        legendSellRisk: "बिक्री खतरा (>७५%)",
+        healthLtvStatus: "कुल गिरवी का लिया गया लोन",
+        legendSafe: "सुरक्षित",
+        legendWarning: "चेतावनी",
+        legendSellRisk: "बिक्री खतरा",
+        legendSafeSub: "< ५०% एलटीवी",
+        legendWarningSub: "५०% - ६५%",
+        legendSellRiskSub: "> ६५% एलटीवी",
         bufferCardTitle: "बैंक चेतावनी से पहले बफ़र",
         collateralLabel: "कुल गिरवी शेयर मूल्य:",
         loanBorrowedLabel: "लिया गया लोन:",
@@ -779,6 +806,9 @@
         step2Header: "यदि कल बाज़ार में गिरावट आती है तो क्या होगा?",
         step2Subtext: "अपने गिरवी पोर्टफोलियो पर बाज़ार गिरावट का प्रभाव देखने के लिए स्लाइडर खींचें।",
         tryLabel: "आज़माएं:",
+        btnPreset1: "४ जून (-६%)",
+        btnPreset2: "करेक्शन (-१२%)",
+        btnPreset3: "क्रैश (-२५%)",
         simFallLabel: "सिम्युलेटेड बाज़ार गिरावट:",
         tick0: "०% (सामान्य)",
         tick1: "-१०% (सामान्य गिरावट)",
@@ -802,16 +832,22 @@
         step3ResetBtn: "स्वास्थ्य सारांश पर वापस जाएं",
         modalCreateTitle: "नई पोर्टफोलियो प्रोफ़ाइल बनाएं (लाइव एनएसई)",
         modalCreateSub: "लाइव बाज़ार भाव के साथ शेयर जोड़ें या स्टेटमेंट से आयात करें।",
+        modeInteractiveBtn: "इंटरैक्टिव शेयर खोज",
+        modeCsvBtn: "CSV / स्टेटमेंट पेस्ट करें",
         lblProfileName: "प्रोफ़ाइल का नाम:",
         lblBorrowerName: "ऋणधारक का नाम:",
         lblLoanAmount: "लिया गया लोन (₹):",
         lblHoldingsLive: "गिरवी शेयर (लाइव एनएसई):",
         btnAddStock: "+ शेयर जोड़ें",
+        lblCsvPaste: "CSV पंक्तियाँ पेस्ट करें (प्रारूप: शेयर संकेत, संख्या):",
+        btnParseCsv: "लाइव भाव प्राप्त करें",
         lblTotalCollateral: "कुल गिरवी मूल्य:",
         lblEstimatedLtv: "अनुमानित एलटीवी:",
         btnCancelProfile: "रद्द करें",
         btnSaveProfile: "प्रोफ़ाइल सहेजें और डैशबोर्ड देखें",
         modalAlertTitle: "एनएसडीएल डिपॉजिटरी चेतावनी पूर्वावलोकन",
+        lblOfficialSms: "आधिकारिक एसएमएस चेतावनी",
+        lblVerifiedWhatsapp: "सत्यापित व्हाट्सएप चेतावनी",
         btnCloseAlert: "बंद करें",
         vernacularPlayBtn: "आवाज सुनें"
       }
@@ -884,9 +920,17 @@
         hiBtn.className = "px-2.5 py-0.5 rounded-md bg-white text-slate-900 shadow-xs";
         enBtn.className = "px-2.5 py-0.5 rounded-md text-slate-600 hover:text-slate-900";
       }
+
       applyFullTranslations();
+      fetchAndRenderUnifiedProfiles();
+
       if (currentAnalysis) {
-        updateVernacularText(currentAnalysis.vernacular[currentLang]);
+        renderData(currentAnalysis);
+      }
+
+      const slider = document.getElementById('marketDropSlider');
+      if (slider) {
+        handleSliderChange(slider.value);
       }
     }
 
@@ -898,6 +942,32 @@
           el.innerText = val;
         }
       }
+
+      // Localize inputs / placeholders
+      const pNameInput = document.getElementById('cpProfileName');
+      if (pNameInput) {
+        if (!pNameInput.value || pNameInput.value === 'My Loan Portfolio' || pNameInput.value === 'मेरा लोन पोर्टफोलियो') {
+          pNameInput.value = currentLang === 'hi' ? 'मेरा लोन पोर्टफोलियो' : 'My Loan Portfolio';
+        }
+        pNameInput.placeholder = currentLang === 'hi' ? 'पोर्टफोलियो का नाम' : 'Profile Name';
+      }
+
+      const bNameInput = document.getElementById('cpBorrowerName');
+      if (bNameInput) {
+        if (!bNameInput.value || bNameInput.value === 'Investor' || bNameInput.value === 'निवेशक') {
+          bNameInput.value = currentLang === 'hi' ? 'निवेशक' : 'Investor';
+        }
+        bNameInput.placeholder = currentLang === 'hi' ? 'ऋणधारक का नाम' : 'Borrower Name';
+      }
+
+      const csvTextarea = document.getElementById('cpCsvText');
+      if (csvTextarea) {
+        csvTextarea.placeholder = currentLang === 'hi' 
+          ? 'EICHERMOT, 50\nRELIANCE, 100\nTCS, 50' 
+          : 'EICHERMOT, 50\nRELIANCE, 100\nTCS, 50';
+      }
+
+      renderStockRows();
       navigateToView(currentView);
     }
 
@@ -916,22 +986,33 @@
       container.innerHTML = '';
 
       if (customProfilesList.length === 0) {
-        container.innerHTML = '<div class="text-xs text-slate-400 p-2">No profiles. Click + New Profile to create one.</div>';
+        container.innerHTML = `<div class="text-xs text-slate-400 p-2">${currentLang === 'hi' ? 'कोई प्रोफ़ाइल नहीं। नई प्रोफ़ाइल बनाने के लिए + नई प्रोफ़ाइल पर क्लिक करें।' : 'No profiles. Click + New Profile to create one.'}</div>`;
         return;
       }
+
+      const nameMap = {
+        'persona_ramesh_high_risk': currentLang === 'hi' ? 'रमेश गुप्ता' : 'Ramesh Gupta',
+        'persona_priya_moderate': currentLang === 'hi' ? 'प्रिया शर्मा' : 'Priya Sharma',
+        'persona_sunita_conservative': currentLang === 'hi' ? 'सुनीता वर्मा' : 'Sunita Verma',
+      };
 
       customProfilesList.forEach(p => {
         const div = document.createElement('div');
         div.className = "flex items-center space-x-1";
+        const ltvText = currentLang === 'hi' ? 'एलटीवी' : 'LTV';
+        const loanText = currentLang === 'hi' ? 'लोन' : 'Loan';
+        const delTitle = currentLang === 'hi' ? 'प्रोफ़ाइल हटाएं' : 'Delete Profile';
+        const displayName = nameMap[p.id] || p.name || 'Profile';
+
         div.innerHTML = `
           <button onclick="switchPersona('${p.id}')" id="btn_${p.id}" class="profile-card flex-1 text-left p-3 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 transition shadow-2xs">
             <div class="flex items-center justify-between">
-              <div class="text-xs font-bold text-slate-900 truncate">${p.name || 'Profile'}</div>
-              <span class="text-[10px] font-bold px-1.5 py-0.2 rounded-full border ${p.badge_class || 'bg-slate-50 text-slate-700 border-slate-200'}">${p.current_ltv_pct}% LTV</span>
+              <div class="text-xs font-bold text-slate-900 truncate">${displayName}</div>
+              <span class="text-[10px] font-bold px-1.5 py-0.2 rounded-full border ${p.badge_class || 'bg-slate-50 text-slate-700 border-slate-200'}">${p.current_ltv_pct}% ${ltvText}</span>
             </div>
-            <div class="text-[11px] text-slate-500">Loan: ₹${Math.round(p.loan_outstanding).toLocaleString('en-IN')}</div>
+            <div class="text-[11px] text-slate-500">${loanText}: ₹${Math.round(p.loan_outstanding).toLocaleString('en-IN')}</div>
           </button>
-          <button onclick="deleteProfile('${p.id}')" class="p-2 text-slate-400 hover:text-rose-600 rounded-lg hover:bg-rose-50" title="Delete Profile">
+          <button onclick="deleteProfile('${p.id}')" class="p-2 text-slate-400 hover:text-rose-600 rounded-lg hover:bg-rose-50" title="${delTitle}">
             <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
           </button>
         `;
@@ -943,7 +1024,8 @@
     }
 
     async function deleteProfile(id) {
-      if (!confirm("Are you sure you want to delete this profile?")) return;
+      const confirmMsg = currentLang === 'hi' ? "क्या आप वाकई इस प्रोफ़ाइल को हटाना चाहते हैं?" : "Are you sure you want to delete this profile?";
+      if (!confirm(confirmMsg)) return;
       try {
         await fetch(`/api/custom-profiles/${id}`, { method: 'DELETE' });
         await fetchAndRenderUnifiedProfiles();
@@ -993,7 +1075,14 @@
       const r = data.remedies;
 
       if (data.persona) {
-        document.getElementById('activeBorrowerTitle').innerText = `Borrower: ${data.persona.borrower_name || data.persona.name}`;
+        const borrowerMap = {
+          'persona_ramesh_high_risk': currentLang === 'hi' ? 'रमेश गुप्ता (इंदौर)' : 'Ramesh Gupta (Indore)',
+          'persona_priya_moderate': currentLang === 'hi' ? 'प्रिया शर्मा (जयपुर)' : 'Priya Sharma (Jaipur)',
+          'persona_sunita_conservative': currentLang === 'hi' ? 'सुनीता वर्मा (पटना)' : 'Sunita Verma (Patna)'
+        };
+        const rawName = data.persona.borrower_name || data.persona.name || 'Investor';
+        const localizedName = borrowerMap[data.persona.id] || borrowerMap[rawName] || rawName;
+        document.getElementById('activeBorrowerTitle').innerText = (currentLang === 'hi' ? 'ऋणधारक: ' : 'Borrower: ') + localizedName;
       }
 
       // ========================================================
@@ -1016,6 +1105,13 @@
       if (pointer) pointer.style.left = `${ltvClamped}%`;
       if (markerDot) markerDot.style.left = `${ltvClamped}%`;
 
+      const ltvStatusEl = document.getElementById('healthLtvStatus');
+      if (ltvStatusEl) {
+        ltvStatusEl.innerText = currentLang === 'hi' ? "कुल गिरवी का लिया गया लोन" : "of collateral borrowed";
+      }
+
+      // Status Badge & Pill
+      const badge = document.getElementById('healthStatusBadge');
       if (m.status_zone === 'SAFE_GREEN') {
         if (pointerBadge) pointerBadge.className = "text-[11px] font-black px-2 py-0.5 rounded-md bg-emerald-600 text-white shadow-sm";
         if (pointerArrow) pointerArrow.className = "w-0 h-0 border-x-4 border-x-transparent border-t-4 border-t-emerald-600";
@@ -1023,6 +1119,10 @@
         if (riskPill) riskPill.className = "text-xs font-bold px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 flex items-center gap-1.5 shadow-2xs";
         if (riskDot) riskDot.className = "w-2 h-2 rounded-full bg-emerald-500";
         if (riskText) riskText.innerText = currentLang === 'hi' ? "सुरक्षित क्षेत्र" : "Safe Zone";
+        if (badge) {
+          badge.innerText = currentLang === 'hi' ? "सुरक्षित क्षेत्र" : "Safe Zone";
+          badge.className = "self-start sm:self-auto text-xs font-extrabold px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200";
+        }
       } else if (m.status_zone === 'MODERATE_YELLOW') {
         if (pointerBadge) pointerBadge.className = "text-[11px] font-black px-2 py-0.5 rounded-md bg-amber-500 text-white shadow-sm";
         if (pointerArrow) pointerArrow.className = "w-0 h-0 border-x-4 border-x-transparent border-t-4 border-t-amber-500";
@@ -1030,38 +1130,53 @@
         if (riskPill) riskPill.className = "text-xs font-bold px-3 py-1 rounded-full bg-amber-50 text-amber-700 border border-amber-200 flex items-center gap-1.5 shadow-2xs";
         if (riskDot) riskDot.className = "w-2 h-2 rounded-full bg-amber-500 animate-pulse";
         if (riskText) riskText.innerText = currentLang === 'hi' ? "चेतावनी क्षेत्र" : "Warning Zone";
+        if (badge) {
+          badge.innerText = currentLang === 'hi' ? "चेतावनी क्षेत्र" : "Warning Zone";
+          badge.className = "self-start sm:self-auto text-xs font-extrabold px-3 py-1 rounded-full bg-amber-50 text-amber-700 border border-amber-200";
+        }
       } else {
         if (pointerBadge) pointerBadge.className = "text-[11px] font-black px-2 py-0.5 rounded-md bg-rose-600 text-white shadow-sm";
         if (pointerArrow) pointerArrow.className = "w-0 h-0 border-x-4 border-x-transparent border-t-4 border-t-rose-600";
         if (markerDot) markerDot.className = "absolute top-1/2 -translate-y-1/2 -translate-x-1/2 w-5 h-5 rounded-full bg-white border-4 border-rose-600 shadow-md transition-all duration-500 pointer-events-none";
         if (riskPill) riskPill.className = "text-xs font-bold px-3 py-1 rounded-full bg-rose-50 text-rose-700 border border-rose-200 flex items-center gap-1.5 shadow-2xs";
         if (riskDot) riskDot.className = "w-2 h-2 rounded-full bg-rose-500 animate-pulse";
-        if (riskText) riskText.innerText = currentLang === 'hi' ? "उच्च जोखिम (बिक्री खतरा)" : "High Risk Zone";
-      }
-
-      // Status Badge
-      const badge = document.getElementById('healthStatusBadge');
-      badge.innerText = m.status_label;
-      if (m.status_zone === 'SAFE_GREEN') {
-        badge.className = "self-start sm:self-auto text-xs font-extrabold px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200";
-      } else if (m.status_zone === 'MODERATE_YELLOW') {
-        badge.className = "self-start sm:self-auto text-xs font-extrabold px-3 py-1 rounded-full bg-amber-50 text-amber-700 border border-amber-200";
-      } else {
-        badge.className = "self-start sm:self-auto text-xs font-extrabold px-3 py-1 rounded-full bg-rose-50 text-rose-700 border border-rose-200";
+        if (riskText) riskText.innerText = currentLang === 'hi' ? "उच्च जोखिम क्षेत्र" : "High Risk Zone";
+        if (badge) {
+          badge.innerText = currentLang === 'hi' ? "उच्च जोखिम क्षेत्र" : "High Risk Zone";
+          badge.className = "self-start sm:self-auto text-xs font-extrabold px-3 py-1 rounded-full bg-rose-50 text-rose-700 border border-rose-200";
+        }
       }
 
       // Plain language distance
-      if (currentLang === 'hi') {
-        document.getElementById('healthDropText').innerText = `केवल ${m.drop_to_margin_call_pct}% बाज़ार गिरावट`;
-        document.getElementById('healthDropExplanation').innerText = `यदि बाज़ार केवल ${m.drop_to_margin_call_pct}% गिरता है, तो बैंक तुरंत मार्जिन कॉल भेज देगा।`;
+      if (m.drop_to_margin_call_pct <= 0) {
+        if (currentLang === 'hi') {
+          document.getElementById('healthDropText').innerText = `मार्जिन सीमा पार! (०% बफ़र)`;
+          document.getElementById('healthDropExplanation').innerText = `आपका लोन पहले ही मार्जिन कॉल चेतावनी स्तर पर है। बैंक तुरंत अतिरिक्त राशि मांग सकता है।`;
+        } else {
+          document.getElementById('healthDropText').innerText = `Margin line crossed! (0% buffer)`;
+          document.getElementById('healthDropExplanation').innerText = `Your loan is already at the warning threshold. Your lender may issue a margin call immediately.`;
+        }
       } else {
-        document.getElementById('healthDropText').innerText = `Only ${m.drop_to_margin_call_pct}% market drop`;
-        document.getElementById('healthDropExplanation').innerText = `If the market drops by ${m.drop_to_margin_call_pct}%, your lender will trigger a margin call demanding immediate money.`;
+        if (currentLang === 'hi') {
+          document.getElementById('healthDropText').innerText = `केवल ${m.drop_to_margin_call_pct}% बाज़ार गिरावट`;
+          document.getElementById('healthDropExplanation').innerText = `यदि बाज़ार केवल ${m.drop_to_margin_call_pct}% गिरता है, तो बैंक तुरंत मार्जिन कॉल भेज देगा।`;
+        } else {
+          document.getElementById('healthDropText').innerText = `Only ${m.drop_to_margin_call_pct}% market drop`;
+          document.getElementById('healthDropExplanation').innerText = `If the market drops by ${m.drop_to_margin_call_pct}%, your lender will trigger a margin call demanding immediate money.`;
+        }
       }
 
       document.getElementById('healthCollateralVal').innerText = `₹${Math.round(m.total_collateral_value).toLocaleString('en-IN')}`;
       document.getElementById('healthLoanVal').innerText = `₹${Math.round(m.loan_outstanding).toLocaleString('en-IN')}`;
-      document.getElementById('healthVulnerabilityBadge').innerText = `${ml.vulnerability_score}/100 (${ml.risk_grade})`;
+      
+      const gradeMap = {
+        'LOW': currentLang === 'hi' ? 'कम जोखिम' : 'LOW RISK',
+        'MODERATE': currentLang === 'hi' ? 'मध्यम जोखिम' : 'MODERATE RISK',
+        'HIGH': currentLang === 'hi' ? 'उच्च जोखिम' : 'HIGH RISK',
+        'CRITICAL': currentLang === 'hi' ? 'अति गंभीर' : 'CRITICAL'
+      };
+      const gradeText = gradeMap[ml.risk_grade] || ml.risk_grade;
+      document.getElementById('healthVulnerabilityBadge').innerText = `${ml.vulnerability_score}/100 (${gradeText})`;
 
       // Buffer Remedies
       document.getElementById('bufferCashVal').innerText = `₹${Math.round(r.cash_prepayment_remedy.amount_inr).toLocaleString('en-IN')}`;
@@ -1080,20 +1195,36 @@
       tb.innerHTML = '';
       document.getElementById('holdingsCountLabel').innerText = `${m.holdings.length} ${currentLang === 'hi' ? 'शेयर/फंड गिरवी' : 'holdings pledged'}`;
 
+      const catMap = {
+        'Small Cap Equity': currentLang === 'hi' ? 'स्मॉल कैप शेयर' : 'Small Cap Equity',
+        'Mid Cap Equity': currentLang === 'hi' ? 'मिड कैप शेयर' : 'Mid Cap Equity',
+        'Large Cap Equity': currentLang === 'hi' ? 'लार्ज कैप शेयर' : 'Large Cap Equity',
+        'Hybrid Equity Fund': currentLang === 'hi' ? 'हाइब्रिड फंड' : 'Hybrid Equity Fund',
+        'Debt Mutual Fund': currentLang === 'hi' ? 'डेट म्यूचुअल फंड' : 'Debt Mutual Fund'
+      };
+
       m.holdings.forEach(h => {
         const tr = document.createElement('tr');
         tr.className = "hover:bg-surface-50 transition";
+        const catText = catMap[h.category] || (currentLang === 'hi' ? 'शेयर प्रतिभूति' : (h.category || 'Equity Holding'));
+        const betaLabel = h.beta > 1.3 
+          ? (currentLang === 'hi' ? 'उच्च संवेदनशीलता' : 'High') 
+          : (h.beta < 0.5 ? (currentLang === 'hi' ? 'सुरक्षित संवेदनशीलता' : 'Defensive') : (currentLang === 'hi' ? 'मध्यम संवेदनशीलता' : 'Moderate'));
+        const betaText = `${betaLabel} (${h.beta})`;
+
         tr.innerHTML = `
           <td class="py-2.5 px-3 font-bold text-slate-900">${h.symbol}<span class="block text-[10px] text-slate-400 font-normal">${h.name}</span></td>
-          <td class="py-2.5 px-3 text-slate-600">${h.category}</td>
+          <td class="py-2.5 px-3 text-slate-600">${catText}</td>
           <td class="py-2.5 px-3 text-slate-600">${h.units.toLocaleString()}</td>
           <td class="py-2.5 px-3 font-semibold text-slate-900">₹${Math.round(h.current_value).toLocaleString('en-IN')}</td>
-          <td class="py-2.5 px-3 font-semibold ${h.beta > 1.3 ? 'text-rose-600' : 'text-emerald-700'}">${h.beta > 1.3 ? (currentLang === 'hi' ? 'उच्च' : 'High') + ' (' + h.beta + ')' : (currentLang === 'hi' ? 'मध्यम' : 'Moderate') + ' (' + h.beta + ')'}</td>
+          <td class="py-2.5 px-3 font-semibold ${h.beta > 1.3 ? 'text-rose-600' : 'text-emerald-700'}">${betaText}</td>
         `;
         tb.appendChild(tr);
       });
 
-      updateVernacularText(data.vernacular[currentLang]);
+      if (data.vernacular && data.vernacular[currentLang]) {
+        updateVernacularText(data.vernacular[currentLang]);
+      }
       loadAlertPayload();
     }
 
@@ -1144,14 +1275,14 @@
         });
         const sim = await res.json();
         document.getElementById('stressCollateralVal').innerText = `₹${Math.round(sim.simulated_collateral_value).toLocaleString('en-IN')}`;
-        document.getElementById('stressWealthLoss').innerText = `-₹${Math.round(sim.total_wealth_lost).toLocaleString('en-IN')} ${currentLang === 'hi' ? 'नुकसान' : 'drop'}`;
+        document.getElementById('stressWealthLoss').innerText = `-₹${Math.round(sim.total_wealth_lost).toLocaleString('en-IN')} ${currentLang === 'hi' ? 'गिरावट' : 'drop'}`;
         document.getElementById('stressLtvVal').innerText = `${sim.simulated_ltv_pct}%`;
 
         const st = document.getElementById('stressActionStatus');
         const dt = document.getElementById('stressActionDetail');
 
         if (sim.liquidation_breached) {
-          st.innerText = currentLang === 'hi' ? "ज़बरन बिक्री (FORCED SALE)!" : "FORCED SALE!";
+          st.innerText = currentLang === 'hi' ? "ज़बरन बिक्री (शेयर बेचे जाएंगे)!" : "FORCED SALE!";
           st.className = "text-base font-black text-rose-600";
           dt.innerText = currentLang === 'hi' 
             ? `बैंक ₹${Math.round(sim.liquidation_dump_amount).toLocaleString('en-IN')} के शेयर तुरंत बेचेगा` 
@@ -1178,7 +1309,7 @@
 
     async function loadAlertPayload() {
       try {
-        const res = await fetch(`/api/depository-alert-preview/${currentPersonaId || 'persona_ramesh_high_risk'}`);
+        const res = await fetch(`/api/depository-alert-preview/${currentPersonaId || 'persona_ramesh_high_risk'}?lang=${currentLang}`);
         const d = await res.json();
         document.getElementById('modalSms').innerText = d.sms_message;
         document.getElementById('modalWhatsapp').innerText = d.whatsapp_message;
@@ -1241,21 +1372,26 @@
 
     function renderStockRows() {
       const container = document.getElementById('stockRowsContainer');
+      if (!container) return;
       container.innerHTML = '';
+      const phStock = currentLang === 'hi' ? 'शेयर का नाम या संकेत लिखें (उदा. Eicher Motors, TCS)' : 'Type symbol or name (e.g. Eicher Motors, Adani, TCS)';
+      const phUnits = currentLang === 'hi' ? 'संख्या' : 'Units';
+      const shText = currentLang === 'hi' ? 'शेयर' : 'sh';
+
       builderRows.forEach((r, idx) => {
         const div = document.createElement('div');
         div.className = "p-3 rounded-xl bg-surface-50 border border-slate-200 flex flex-wrap sm:flex-nowrap items-center gap-2 text-xs";
         div.innerHTML = `
           <div class="relative flex-1">
-            <input type="text" value="${r.symbol}" oninput="handleStockSearchInput(this.value, ${idx})" onblur="hideDropdownDelayed(${idx})" placeholder="Type symbol or name (e.g. Eicher Motors, Adani, TCS)" class="w-full px-2.5 py-1.5 bg-white border border-slate-200 rounded-lg text-slate-900 font-bold uppercase focus:outline-emerald-600">
+            <input type="text" value="${r.symbol}" oninput="handleStockSearchInput(this.value, ${idx})" onblur="hideDropdownDelayed(${idx})" placeholder="${phStock}" class="w-full px-2.5 py-1.5 bg-white border border-slate-200 rounded-lg text-slate-900 font-bold uppercase focus:outline-emerald-600">
             <div id="dropdown_${idx}" class="absolute top-full left-0 right-0 bg-white border border-slate-200 rounded-xl shadow-lg mt-1 z-50 hidden max-h-48 overflow-y-auto"></div>
           </div>
           <div class="w-24">
-            <input type="number" value="${r.units}" oninput="updateRowUnits(${idx}, this.value)" placeholder="Units" class="w-full px-2.5 py-1.5 bg-white border border-slate-200 rounded-lg text-slate-900 font-semibold focus:outline-emerald-600">
+            <input type="number" value="${r.units}" oninput="updateRowUnits(${idx}, this.value)" placeholder="${phUnits}" class="w-full px-2.5 py-1.5 bg-white border border-slate-200 rounded-lg text-slate-900 font-semibold focus:outline-emerald-600">
           </div>
           <div class="text-right w-28">
             <span class="font-bold text-slate-900 block">₹${Math.round(r.units * r.price).toLocaleString('en-IN')}</span>
-            <span class="text-[10px] text-slate-500">₹${r.price}/sh</span>
+            <span class="text-[10px] text-slate-500">₹${r.price}/${shText}</span>
           </div>
           <button onclick="removeStockRow(${r.id})" class="p-1.5 text-slate-400 hover:text-rose-600 rounded-lg">
             <i data-lucide="trash" class="w-4 h-4"></i>
@@ -1279,7 +1415,7 @@
         const dd = document.getElementById(`dropdown_${rowIdx}`);
         if (!dd) return;
 
-        dd.innerHTML = '<div class="px-3 py-2 text-[11px] text-slate-400">Searching live NSE/BSE...</div>';
+        dd.innerHTML = `<div class="px-3 py-2 text-[11px] text-slate-400">${currentLang === 'hi' ? 'लाइव एनएसई/बीएसई खोज रहे हैं...' : 'Searching live NSE/BSE...'}</div>`;
         dd.classList.remove('hidden');
 
         const res = await fetch(`/api/stocks/search?q=${encodeURIComponent(q.trim())}`);
@@ -1290,10 +1426,11 @@
           data.results.forEach(s => {
             const item = document.createElement('div');
             item.className = "px-3 py-2 hover:bg-emerald-50 cursor-pointer border-b border-slate-100 last:border-0";
+            const quoteText = s.base_price > 0 ? `₹${s.base_price.toLocaleString('en-IN')}` : (currentLang === 'hi' ? 'लाइव भाव' : 'Live Quote');
             item.innerHTML = `
               <div class="font-bold text-slate-900 flex justify-between">
                 <span>${s.symbol}</span>
-                <span class="text-emerald-700 font-bold">₹${s.base_price > 0 ? s.base_price.toLocaleString('en-IN') : 'Live Quote'}</span>
+                <span class="text-emerald-700 font-bold">${quoteText}</span>
               </div>
               <div class="text-[10px] text-slate-500 truncate">${s.name} • ${s.category}</div>
             `;
@@ -1301,7 +1438,7 @@
             dd.appendChild(item);
           });
         } else {
-          dd.innerHTML = '<div class="px-3 py-2 text-[11px] text-slate-400">No matching Indian stocks found</div>';
+          dd.innerHTML = `<div class="px-3 py-2 text-[11px] text-slate-400">${currentLang === 'hi' ? 'कोई भारतीय शेयर नहीं मिला' : 'No matching Indian stocks found'}</div>`;
         }
       } catch (e) {
         console.error(e);
@@ -1351,7 +1488,7 @@
     async function parseAndLoadCsv() {
       const csvText = document.getElementById('cpCsvText').value.trim();
       if (!csvText) {
-        alert("Please paste CSV text first (e.g. EICHERMOT, 50)");
+        alert(currentLang === 'hi' ? "कृपया पहले CSV टेक्स्ट दर्ज करें (उदा. EICHERMOT, 50)" : "Please paste CSV text first (e.g. EICHERMOT, 50)");
         return;
       }
       try {
@@ -1375,7 +1512,7 @@
           renderStockRows();
           updateBuilderSummary();
         } else {
-          alert("Could not parse any holdings from CSV. Ensure format is: Symbol, Units");
+          alert(currentLang === 'hi' ? "CSV से कोई शेयर नहीं मिला। प्रारूप जांचें: शेयर संकेत, संख्या" : "Could not parse any holdings from CSV. Ensure format is: Symbol, Units");
         }
       } catch (e) {
         alert("CSV Import error: " + e);
@@ -1383,12 +1520,12 @@
     }
 
     async function saveAndAnalyzeCustomProfile() {
-      const name = document.getElementById('cpProfileName').value.trim() || "My Loan Portfolio";
-      const borrower = document.getElementById('cpBorrowerName').value.trim() || "Investor";
+      const name = document.getElementById('cpProfileName').value.trim() || (currentLang === 'hi' ? "मेरा लोन पोर्टफोलियो" : "My Loan Portfolio");
+      const borrower = document.getElementById('cpBorrowerName').value.trim() || (currentLang === 'hi' ? "निवेशक" : "Investor");
       const loan = parseFloat(document.getElementById('cpLoanAmount').value) || 200000;
 
       if (builderRows.length === 0) {
-        alert("Please add at least one stock to your portfolio.");
+        alert(currentLang === 'hi' ? "कृपया अपने पोर्टफोलियो में कम से कम एक शेयर जोड़ें।" : "Please add at least one stock to your portfolio.");
         return;
       }
 

@@ -246,39 +246,60 @@ def pre_loan_sandbox(req: SandboxRequest):
     )
 
 @router.get("/depository-alert-preview/{persona_id}")
-def depository_alert_preview(persona_id: str):
+def depository_alert_preview(persona_id: str, lang: str = "en"):
     p = None
     if persona_id in INVESTOR_PERSONAS:
         p = INVESTOR_PERSONAS[persona_id]
-    elif persona_id.startswith("custom_"):
+    elif persona_id.startswith("custom_") or persona_id.startswith("persona_"):
         custom_list = list_custom_profiles()
         p = next((c for c in custom_list if c["id"] == persona_id), None)
 
     if not p:
-        p = INVESTOR_PERSONAS["persona_ramesh_high_risk"]
+        p = INVESTOR_PERSONAS.get("persona_ramesh_high_risk") or (list_custom_profiles()[0] if list_custom_profiles() else None)
+
+    if not p:
+        return {"sms_message": "No profile found", "whatsapp_message": "No profile found"}
 
     metrics = calculate_portfolio_metrics(p["holdings"], p["loan_outstanding"])
     lender = p.get("lender", "Your NBFC Lender")
     name = p.get("name", "Investor")
 
-    sms_text = (
-        f"[NSDL-KAVACH ALERT] Dear {name}, your pledged collateral with {lender} "
-        f"has an LTV of {metrics['current_ltv_pct']}%. "
-        f"A market drop of {metrics['drop_to_margin_call_pct']}% will trigger lender liquidation. "
-        f"Check safety buffer at ltvkavach.nsdl.org"
-    )
-
-    whatsapp_text = (
-        f"🛡️ *NSDL COLLATERAL RESILIENCE ALERT*\n\n"
-        f"Dear *{name}*,\n"
-        f"Lender: *{lender}*\n\n"
-        f"⚠️ *Current LTV:* {metrics['current_ltv_pct']}%\n"
-        f"📉 *Distance to Margin Call:* {metrics['drop_to_margin_call_pct']}%\n"
-        f"💰 *Pledged Portfolio Value:* ₹{metrics['total_collateral_value']:,}\n"
-        f"💳 *Loan Borrowed:* ₹{metrics['loan_outstanding']:,}\n\n"
-        f"💡 *Resilience Buffer Recommendation:* Pay ₹{round(max(0, metrics['loan_outstanding'] - metrics['total_collateral_value']*0.45)):,} "
-        f"or pledge low-risk debt funds to protect against forced selling."
-    )
+    if lang == "hi":
+        sms_text = (
+            f"[एनएसडीएल-कवच चेतावनी] प्रिय {name}, {lender} के पास आपके गिरवी शेयरों का "
+            f"वर्तमान एलटीवी {metrics['current_ltv_pct']}% है। "
+            f"केवल {metrics['drop_to_margin_call_pct']}% बाज़ार गिरावट पर बैंक द्वारा ज़बरन बिक्री शुरू हो सकती है। "
+            f"सुरक्षा शील्ड देखें: ltvkavach.nsdl.org"
+        )
+        whatsapp_text = (
+            f"🛡️ *एनएसडीएल गिरवी शेयर सुरक्षा चेतावनी*\n\n"
+            f"प्रिय *{name}*,\n"
+            f"ऋणदाता: *{lender}*\n\n"
+            f"⚠️ *वर्तमान एलटीवी अनुपात:* {metrics['current_ltv_pct']}%\n"
+            f"📉 *मार्जिन कॉल से दूरी:* केवल {metrics['drop_to_margin_call_pct']}% बाज़ार गिरावट\n"
+            f"💰 *कुल गिरवी शेयर मूल्य:* ₹{int(metrics['total_collateral_value']):,}\n"
+            f"💳 *लिया गया कुल लोन:* ₹{int(metrics['loan_outstanding']):,}\n\n"
+            f"💡 *सुरक्षा शील्ड उपाय:* ज़बरन बिक्री से बचने के लिए ₹{round(max(0, metrics['loan_outstanding'] - metrics['total_collateral_value']*0.45)):,} "
+            f"का भुगतान करें या सुरक्षित डेट फंड / एफडी गिरवी रखें।"
+        )
+    else:
+        sms_text = (
+            f"[NSDL-KAVACH ALERT] Dear {name}, your pledged collateral with {lender} "
+            f"has an LTV of {metrics['current_ltv_pct']}%. "
+            f"A market drop of {metrics['drop_to_margin_call_pct']}% will trigger lender liquidation. "
+            f"Check safety buffer at ltvkavach.nsdl.org"
+        )
+        whatsapp_text = (
+            f"🛡️ *NSDL COLLATERAL RESILIENCE ALERT*\n\n"
+            f"Dear *{name}*,\n"
+            f"Lender: *{lender}*\n\n"
+            f"⚠️ *Current LTV:* {metrics['current_ltv_pct']}%\n"
+            f"📉 *Distance to Margin Call:* {metrics['drop_to_margin_call_pct']}%\n"
+            f"💰 *Pledged Portfolio Value:* ₹{int(metrics['total_collateral_value']):,}\n"
+            f"💳 *Loan Borrowed:* ₹{int(metrics['loan_outstanding']):,}\n\n"
+            f"💡 *Resilience Buffer Recommendation:* Pay ₹{round(max(0, metrics['loan_outstanding'] - metrics['total_collateral_value']*0.45)):,} "
+            f"or pledge low-risk debt funds to protect against forced selling."
+        )
 
     return {
         "recipient": name,

@@ -19,9 +19,9 @@ def generate_vernacular_guidance(analysis_data: Dict[str, Any], lang: str = "hi"
     if lang == "hi":
         # Hindi guidance
         if zone == "SAFE_GREEN":
-            title = "स्थिति सुरक्षित है (Safe Zone)"
+            title = "स्थिति पूर्णतः सुरक्षित है (हरा क्षेत्र)"
             message = (
-                f"आपके गिरवी रखे शेयर सुरक्षित हैं। वर्तमान LTV {ltv_pct}% है। "
+                f"आपके गिरवी रखे शेयर सुरक्षित हैं। वर्तमान एलटीवी (LTV) {ltv_pct}% है। "
                 f"बाज़ार में {drop_pct}% तक की गिरावट आने पर भी आपके शेयरों पर कोई खतरा नहीं है।"
             )
             action_prompt = "किसी अतिरिक्त भुगतान की आवश्यकता नहीं है। आराम से निवेश जारी रखें।"
@@ -30,9 +30,9 @@ def generate_vernacular_guidance(analysis_data: Dict[str, Any], lang: str = "hi"
                 f"बाज़ार {drop_pct} प्रतिशत गिरने पर भी बैंक आपके शेयर नहीं बेचेगा।"
             )
         elif zone == "MODERATE_YELLOW":
-            title = "सतर्क रहें (Caution Zone)"
+            title = "सतर्क रहें (पीला चेतावनी क्षेत्र)"
             message = (
-                f"सावधान! आपका LTV {ltv_pct}% पर पहुँच गया है। यदि बाज़ार {drop_pct}% और गिरता है, "
+                f"सावधान! आपका एलटीवी अनुपात {ltv_pct}% पर पहुँच गया है। यदि बाज़ार {drop_pct}% और गिरता है, "
                 f"तो बैंक मार्जिन कॉल भेज देगा।"
             )
             action_prompt = f"लोन को पूरी तरह सुरक्षित करने के लिए ₹{round(cash_fix):,} का भुगतान करें या सुरक्षित डेट फंड जोड़ें।"
@@ -42,9 +42,9 @@ def generate_vernacular_guidance(analysis_data: Dict[str, Any], lang: str = "hi"
                 f"सुरक्षा के लिए ₹{round(cash_fix):,} चुकाएं।"
             )
         else: # WARNING_AMBER or CRITICAL_RED
-            title = "अति गंभीर चेतावनी: शेयर बिकने का खतरा! (Danger Zone)"
+            title = "अति गंभीर चेतावनी: शेयर बिकने का खतरा! (लाल क्षेत्र)"
             message = (
-                f"खतरा! LTV सीमा पार हो चुकी है ({ltv_pct}%)। बैंक तुरंत आपके गिरवी रखे शेयर "
+                f"खतरा! एलटीवी सीमा पार हो चुकी है ({ltv_pct}%)। बैंक तुरंत आपके गिरवी रखे शेयर "
                 f"बाज़ार में कम कीमत पर बेच सकता है।"
             )
             action_prompt = (
