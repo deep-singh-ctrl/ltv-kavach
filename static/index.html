@@ -32,13 +32,14 @@
     }
   </script>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Noto+Sans+Devanagari:wght@400;600;700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Noto+Sans+Devanagari:wght@400;600;700;800&display=swap');
     body {
       font-family: 'Plus Jakarta Sans', 'Noto Sans Devanagari', -apple-system, BlinkMacSystemFont, sans-serif;
     }
     .gauge-needle {
-      transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
-      transform-origin: 100px 95px;
+      transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+      transform-box: fill-box;
+      transform-origin: 100px 100px;
     }
     .view-panel {
       transition: opacity 0.2s ease, transform 0.2s ease;
@@ -55,7 +56,7 @@
 </head>
 <body class="bg-surface-50 text-slate-800 min-h-screen flex flex-col md:flex-row antialiased selection:bg-emerald-100 selection:text-emerald-900">
 
-  <!-- LEFT SIDEBAR: Clean, Soft Light Design -->
+  <!-- LEFT SIDEBAR -->
   <aside class="w-full md:w-80 bg-white border-r border-slate-200/80 flex flex-col justify-between flex-shrink-0 shadow-sm z-30">
     <div class="overflow-y-auto max-h-[calc(100vh-140px)]">
       
@@ -74,53 +75,53 @@
                 एलटीवी कवच
               </span>
             </div>
-            <p class="text-xs text-slate-500 font-medium">SEBI • NSDL SANGYAN 2026</p>
+            <p class="text-xs text-slate-500 font-medium" id="brandSubtitle">SEBI • NSDL SANGYAN 2026</p>
           </div>
         </div>
       </div>
 
-      <!-- ONE UNIFIED PROFILES BUCKET -->
+      <!-- ONE UNIFIED PROFILES BUCKET (ALL PROFILES DELETABLE) -->
       <div class="p-5 border-b border-slate-100">
         <div class="flex items-center justify-between mb-3">
-          <span class="text-xs font-bold uppercase tracking-wider text-slate-400">
+          <span class="text-xs font-bold uppercase tracking-wider text-slate-400" id="profilesHeaderTitle">
             Profiles
           </span>
           <button onclick="openCustomPortfolioModal()" class="text-xs font-bold text-emerald-600 hover:text-emerald-700 flex items-center gap-1 bg-emerald-50 hover:bg-emerald-100/70 border border-emerald-200 px-2.5 py-1 rounded-lg transition shadow-2xs">
             <i data-lucide="plus" class="w-3.5 h-3.5"></i>
-            <span>New Profile</span>
+            <span id="newProfileBtnText">+ New Profile</span>
           </button>
         </div>
 
         <!-- Single unified bucket of profiles -->
         <div id="unifiedProfilesList" class="space-y-2">
-          <!-- Populated dynamically via JS: Ramesh, Priya, Sunita + all custom user profiles -->
+          <!-- Populated dynamically via JS: Ramesh, Priya, Sunita + all custom user profiles with delete icons -->
         </div>
       </div>
 
-      <!-- 3-STEP JOURNEY NAVIGATION (No Extra Tools clutter) -->
+      <!-- 3-STEP JOURNEY NAVIGATION -->
       <nav class="p-5 space-y-2">
-        <span class="block text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-2 px-1">
+        <span class="block text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-2 px-1" id="journeyNavTitle">
           Simple 3-Step Journey
         </span>
 
         <button onclick="navigateToView('view-health')" id="nav_health" class="nav-item w-full flex items-center space-x-3 px-3.5 py-3 rounded-xl text-xs font-bold bg-emerald-600 text-white shadow-sm transition">
           <div class="w-5 h-5 rounded-full bg-white/20 flex items-center justify-center text-[11px]">1</div>
-          <span>Loan Health Check</span>
+          <span id="navHealthText">Loan Health Check</span>
         </button>
 
         <button onclick="navigateToView('view-stress')" id="nav_stress" class="nav-item w-full flex items-center space-x-3 px-3.5 py-3 rounded-xl text-xs font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-100/80 transition">
           <div class="w-5 h-5 rounded-full bg-slate-200 text-slate-700 flex items-center justify-center text-[11px]">2</div>
-          <span>Market Crash Test</span>
+          <span id="navStressText">Market Crash Test</span>
         </button>
 
         <button onclick="navigateToView('view-buffer')" id="nav_buffer" class="nav-item w-full flex items-center space-x-3 px-3.5 py-3 rounded-xl text-xs font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-100/80 transition">
           <div class="w-5 h-5 rounded-full bg-slate-200 text-slate-700 flex items-center justify-center text-[11px]">3</div>
-          <span>Safety Shield Plan</span>
+          <span id="navBufferText">Safety Shield Plan</span>
         </button>
       </nav>
     </div>
 
-    <!-- Bottom Controls: Voice & Language -->
+    <!-- Bottom Controls: Voice & Full Language Switcher -->
     <div class="p-5 border-t border-slate-100 bg-surface-50 space-y-3">
       <!-- Voice Advice -->
       <button onclick="playVoiceGuidance()" id="voiceAdviceBtn" class="w-full py-2.5 px-3 rounded-xl bg-white border border-emerald-300 hover:border-emerald-400 text-emerald-800 text-xs font-bold flex items-center justify-center gap-2 shadow-xs transition">
@@ -130,7 +131,7 @@
 
       <!-- Language Toggle -->
       <div class="flex items-center justify-between text-xs pt-1">
-        <span class="text-slate-500 font-medium">भाषा / Language:</span>
+        <span class="text-slate-500 font-medium" id="langSwitchLabel">भाषा / Language:</span>
         <div class="flex rounded-lg bg-slate-200/80 p-0.5 border border-slate-200 font-bold text-xs">
           <button id="langHiBtn" onclick="switchLanguage('hi')" class="px-2.5 py-0.5 rounded-md bg-white text-slate-900 shadow-xs">हिंदी</button>
           <button id="langEnBtn" onclick="switchLanguage('en')" class="px-2.5 py-0.5 rounded-md text-slate-600 hover:text-slate-900">EN</button>
@@ -168,7 +169,7 @@
     <!-- CONTENT BODY -->
     <div class="p-6 md:p-10 max-w-4xl w-full mx-auto space-y-6 flex-1">
 
-      <!-- VERNACULAR SUMMARY BANNER (Clean, soothing light card) -->
+      <!-- VERNACULAR SUMMARY BANNER -->
       <div id="vernacularBox" class="bg-emerald-50/70 border border-emerald-200/90 rounded-2xl p-4 flex items-center justify-between gap-4 shadow-xs">
         <div class="flex items-center space-x-3.5">
           <div class="w-9 h-9 rounded-xl bg-white border border-emerald-200 flex items-center justify-center text-emerald-600 flex-shrink-0 shadow-2xs">
@@ -185,7 +186,7 @@
         </div>
         <button onclick="playVoiceGuidance()" class="flex-shrink-0 px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-xs transition flex items-center gap-1.5">
           <i data-lucide="volume-2" class="w-3.5 h-3.5"></i>
-          <span class="hidden sm:inline">Play</span>
+          <span class="hidden sm:inline" id="vernacularPlayBtn">Play</span>
         </button>
       </div>
 
@@ -198,8 +199,8 @@
         <div class="bg-white border border-slate-200/80 rounded-3xl p-8 shadow-sm">
           <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 pb-5">
             <div>
-              <h2 class="text-lg font-bold text-slate-900">How safe is your loan today?</h2>
-              <p class="text-xs text-slate-500 mt-0.5">Calculated from your pledged stocks against bank margin rules.</p>
+              <h2 class="text-lg font-bold text-slate-900" id="step1Header">How safe is your loan today?</h2>
+              <p class="text-xs text-slate-500 mt-0.5" id="step1Subtext">Calculated from your pledged stocks against bank margin rules.</p>
             </div>
             <div id="healthStatusBadge" class="self-start sm:self-auto text-xs font-extrabold px-3 py-1 rounded-full bg-rose-50 text-rose-700 border border-rose-200">
               High Risk Zone
@@ -209,36 +210,36 @@
           <!-- Gauge + Primary Insight -->
           <div class="grid grid-cols-1 md:grid-cols-12 gap-8 items-center mt-6">
             
-            <!-- Visual Gauge -->
+            <!-- Visual Gauge with EXACT 180-DEGREE ROTATION BOUNDARIES -->
             <div class="md:col-span-6 flex flex-col items-center justify-center p-6 bg-surface-50 rounded-2xl border border-slate-200/60">
               <div class="relative w-64 h-36">
                 <svg viewBox="0 0 200 115" class="w-full h-full overflow-visible">
-                  <!-- Green Arc: 0 to 50% -->
+                  <!-- Green Arc: 0 to 50% LTV -->
                   <path d="M 20 100 A 80 80 0 0 1 100 20" fill="none" stroke="#10b981" stroke-width="14" stroke-linecap="round"/>
-                  <!-- Yellow Arc: 50 to 65% -->
+                  <!-- Yellow Arc: 50 to 65% LTV -->
                   <path d="M 100 20 A 80 80 0 0 1 156 38" fill="none" stroke="#f59e0b" stroke-width="14" stroke-linecap="round"/>
-                  <!-- Red Arc: 65 to 75%+ -->
+                  <!-- Red Arc: 65 to 100% LTV -->
                   <path d="M 156 38 A 80 80 0 0 1 180 100" fill="none" stroke="#f43f5e" stroke-width="14" stroke-linecap="round"/>
                   <!-- Center Needle Hub -->
                   <circle cx="100" cy="100" r="8" fill="#1e293b"/>
-                  <!-- Needle -->
-                  <g id="needleGroup" class="gauge-needle" style="transform: rotate(-45deg);">
-                    <polygon points="98,100 102,100 100,28" fill="#0f172a"/>
-                    <circle cx="100" cy="100" r="3" fill="#10b981"/>
+                  <!-- Needle: Drawn pointing straight up (0 deg = 12 o'clock = 50% LTV) -->
+                  <g id="needleGroup" class="gauge-needle" transform="rotate(-90 100 100)">
+                    <polygon points="98,100 102,100 100,26" fill="#0f172a"/>
+                    <circle cx="100" cy="100" r="3.5" fill="#10b981"/>
                   </g>
                 </svg>
 
                 <div class="absolute bottom-0 left-0 right-0 text-center">
-                  <span id="healthLtvNumber" class="text-4xl font-extrabold tracking-tight text-slate-900">64.7%</span>
-                  <p class="text-[10px] text-slate-500 uppercase tracking-widest font-bold mt-0.5">Current LTV Ratio</p>
+                  <span id="healthLtvNumber" class="text-4xl font-extrabold tracking-tight text-slate-900">0.0%</span>
+                  <p class="text-[10px] text-slate-500 uppercase tracking-widest font-bold mt-0.5" id="ltvRatioLabel">Current LTV Ratio</p>
                 </div>
               </div>
 
               <!-- Legend -->
               <div class="flex items-center justify-center gap-4 text-xs font-semibold text-slate-500 mt-6 pt-3 border-t border-slate-200/60 w-full">
-                <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span> Safe (&lt;50%)</span>
-                <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span> Warning</span>
-                <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-rose-500"></span> Sell Risk (&gt;75%)</span>
+                <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span> <span id="legendSafe">Safe (&lt;50%)</span></span>
+                <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span> <span id="legendWarning">Warning</span></span>
+                <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-rose-500"></span> <span id="legendSellRisk">Sell Risk (&gt;75%)</span></span>
               </div>
             </div>
 
@@ -247,30 +248,30 @@
               
               <!-- Distance Card (Key Takeaway) -->
               <div class="p-5 rounded-2xl bg-surface-50 border border-slate-200/80">
-                <span class="text-xs font-bold uppercase tracking-wider text-slate-500">
+                <span class="text-xs font-bold uppercase tracking-wider text-slate-500" id="bufferCardTitle">
                   Buffer Before Bank Warning
                 </span>
                 <div class="text-2xl font-black text-slate-900 mt-1" id="healthDropText">
-                  Only 7.6% market drop
+                  Calculating...
                 </div>
                 <p class="text-xs text-slate-600 mt-1 leading-relaxed" id="healthDropExplanation">
-                  If the market drops by just 7.6%, your lender will trigger a margin call demanding immediate money.
+                  Checking safety distance...
                 </p>
               </div>
 
               <!-- Basic Numbers -->
               <div class="p-4 rounded-2xl bg-white border border-slate-200/80 text-xs space-y-2.5">
                 <div class="flex justify-between">
-                  <span class="text-slate-500">Pledged Collateral:</span>
-                  <b id="healthCollateralVal" class="text-slate-900 font-bold">₹5,87,550</b>
+                  <span class="text-slate-500" id="collateralLabel">Pledged Collateral:</span>
+                  <b id="healthCollateralVal" class="text-slate-900 font-bold">₹0</b>
                 </div>
                 <div class="flex justify-between">
-                  <span class="text-slate-500">Loan Borrowed:</span>
-                  <b id="healthLoanVal" class="text-slate-900 font-bold">₹3,80,000</b>
+                  <span class="text-slate-500" id="loanBorrowedLabel">Loan Borrowed:</span>
+                  <b id="healthLoanVal" class="text-slate-900 font-bold">₹0</b>
                 </div>
                 <div class="flex justify-between pt-1 border-t border-slate-100">
-                  <span class="text-slate-500">Risk Assessment:</span>
-                  <span id="healthVulnerabilityBadge" class="text-rose-600 font-bold">78/100 (Fragile)</span>
+                  <span class="text-slate-500" id="riskAssessmentLabel">Risk Assessment:</span>
+                  <span id="healthVulnerabilityBadge" class="text-rose-600 font-bold">Checking...</span>
                 </div>
               </div>
 
@@ -283,20 +284,20 @@
           <div class="flex items-center justify-between border-b border-slate-100 pb-3">
             <div class="flex items-center space-x-2">
               <i data-lucide="layers" class="w-4 h-4 text-emerald-600"></i>
-              <h3 class="text-sm font-bold text-slate-900">Pledged Collateral Securities</h3>
+              <h3 class="text-sm font-bold text-slate-900" id="holdingsCardTitle">Pledged Collateral Securities</h3>
             </div>
-            <span class="text-xs font-semibold text-slate-500" id="holdingsCountLabel">3 holdings</span>
+            <span class="text-xs font-semibold text-slate-500" id="holdingsCountLabel">0 holdings</span>
           </div>
 
           <div class="overflow-x-auto mt-3">
             <table class="w-full text-left text-xs text-slate-700">
               <thead class="bg-surface-50 text-slate-500 font-bold text-[10px] uppercase border-b border-slate-100">
                 <tr>
-                  <th class="py-2.5 px-3">Stock / Asset</th>
-                  <th class="py-2.5 px-3">Category</th>
-                  <th class="py-2.5 px-3">Units</th>
-                  <th class="py-2.5 px-3">Market Value</th>
-                  <th class="py-2.5 px-3">Market Sensitivity</th>
+                  <th class="py-2.5 px-3" id="thStock">Stock / Asset</th>
+                  <th class="py-2.5 px-3" id="thCategory">Category</th>
+                  <th class="py-2.5 px-3" id="thUnits">Units</th>
+                  <th class="py-2.5 px-3" id="thValue">Market Value</th>
+                  <th class="py-2.5 px-3" id="thSensitivity">Market Sensitivity</th>
                 </tr>
               </thead>
               <tbody id="holdingsTableBody" class="divide-y divide-slate-100">
@@ -307,9 +308,9 @@
 
           <!-- Bottom Navigation CTA -->
           <div class="mt-6 pt-5 border-t border-slate-100 flex justify-between items-center">
-            <span class="text-xs text-slate-500">Next: See what happens if the market crashes</span>
+            <span class="text-xs text-slate-500" id="step1NextPrompt">Next: See what happens if the market crashes</span>
             <button onclick="navigateToView('view-stress')" class="px-6 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs flex items-center gap-2 shadow-xs transition">
-              <span>Step 2: Test Market Crash Simulator</span>
+              <span id="step1NextBtn">Step 2: Test Market Crash Simulator</span>
               <i data-lucide="arrow-right" class="w-4 h-4"></i>
             </button>
           </div>
@@ -325,11 +326,11 @@
           
           <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 pb-5">
             <div>
-              <h2 class="text-lg font-bold text-slate-900">What if the market falls tomorrow?</h2>
-              <p class="text-xs text-slate-500 mt-0.5">Drag the slider to test market dips on your pledged portfolio.</p>
+              <h2 class="text-lg font-bold text-slate-900" id="step2Header">What if the market falls tomorrow?</h2>
+              <p class="text-xs text-slate-500 mt-0.5" id="step2Subtext">Drag the slider to test market dips on your pledged portfolio.</p>
             </div>
             <div class="flex items-center gap-1.5">
-              <span class="text-xs text-slate-500 mr-1 hidden sm:inline">Try:</span>
+              <span class="text-xs text-slate-500 mr-1 hidden sm:inline" id="tryLabel">Try:</span>
               <button onclick="setStressDrop(-0.06)" class="px-2.5 py-1 rounded-lg bg-surface-100 hover:bg-surface-200 text-slate-700 text-xs font-semibold transition">
                 June 4 (-6%)
               </button>
@@ -345,7 +346,7 @@
           <!-- The Slider -->
           <div class="p-6 bg-surface-50 rounded-2xl border border-slate-200/70 my-6">
             <div class="flex justify-between items-center mb-2">
-              <span class="text-xs font-bold text-slate-600 uppercase">Simulated Market Fall:</span>
+              <span class="text-xs font-bold text-slate-600 uppercase" id="simFallLabel">Simulated Market Fall:</span>
               <span id="sliderDisplay" class="text-2xl font-black text-rose-600">-10.0%</span>
             </div>
             <input 
@@ -359,31 +360,31 @@
               class="w-full h-2.5 bg-slate-200 rounded-lg cursor-pointer accent-emerald-600"
             />
             <div class="flex justify-between text-[11px] text-slate-400 font-semibold mt-2">
-              <span>0% (Normal)</span>
-              <span>-10% (Routine Dip)</span>
-              <span>-20% (Bear Market)</span>
-              <span>-35% (Crash)</span>
+              <span id="tick0">0% (Normal)</span>
+              <span id="tick1">-10% (Routine Dip)</span>
+              <span id="tick2">-20% (Bear Market)</span>
+              <span id="tick3">-35% (Crash)</span>
             </div>
           </div>
 
           <!-- Outcome Cards -->
           <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div class="p-5 rounded-2xl bg-white border border-slate-200/80 shadow-2xs">
-              <span class="text-[11px] font-bold uppercase text-slate-500">Your Portfolio Becomes</span>
-              <div class="text-xl font-black text-slate-900 mt-1" id="stressCollateralVal">₹5,20,000</div>
-              <span class="text-xs text-rose-600 font-semibold mt-0.5 block" id="stressWealthLoss">-₹67,550 loss</span>
+              <span class="text-[11px] font-bold uppercase text-slate-500" id="card1Label">Your Portfolio Becomes</span>
+              <div class="text-xl font-black text-slate-900 mt-1" id="stressCollateralVal">₹0</div>
+              <span class="text-xs text-rose-600 font-semibold mt-0.5 block" id="stressWealthLoss">-₹0 drop</span>
             </div>
 
             <div class="p-5 rounded-2xl bg-white border border-slate-200/80 shadow-2xs">
-              <span class="text-[11px] font-bold uppercase text-slate-500">New LTV Ratio</span>
-              <div class="text-xl font-black text-amber-600 mt-1" id="stressLtvVal">73.1%</div>
-              <span class="text-xs text-slate-500 mt-0.5 block">Limit is 75%</span>
+              <span class="text-[11px] font-bold uppercase text-slate-500" id="card2Label">New LTV Ratio</span>
+              <div class="text-xl font-black text-amber-600 mt-1" id="stressLtvVal">0.0%</div>
+              <span class="text-xs text-slate-500 mt-0.5 block" id="card2Sub">Limit is 75%</span>
             </div>
 
             <div class="p-5 rounded-2xl bg-white border border-slate-200/80 shadow-2xs">
-              <span class="text-[11px] font-bold uppercase text-slate-500">Lender Action</span>
-              <div class="text-base font-extrabold text-amber-700 mt-1" id="stressActionStatus">Margin Call Active</div>
-              <span class="text-xs text-slate-500 mt-0.5 block" id="stressActionDetail">Must pay within 2 hours</span>
+              <span class="text-[11px] font-bold uppercase text-slate-500" id="card3Label">Lender Action</span>
+              <div class="text-base font-extrabold text-amber-700 mt-1" id="stressActionStatus">Safe</div>
+              <span class="text-xs text-slate-500 mt-0.5 block" id="stressActionDetail">No action needed</span>
             </div>
           </div>
 
@@ -391,10 +392,10 @@
           <div class="mt-8 pt-6 border-t border-slate-100 flex justify-between items-center">
             <button onclick="navigateToView('view-health')" class="px-5 py-2.5 rounded-xl bg-surface-100 hover:bg-surface-200 text-slate-700 font-semibold text-xs flex items-center gap-1.5 transition">
               <i data-lucide="arrow-left" class="w-4 h-4"></i>
-              <span>Back</span>
+              <span id="step2BackBtn">Back</span>
             </button>
             <button onclick="navigateToView('view-buffer')" class="px-6 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs flex items-center gap-2 shadow-xs transition">
-              <span>Step 3: See How to Protect Your Portfolio</span>
+              <span id="step2NextBtn">Step 3: See How to Protect Your Portfolio</span>
               <i data-lucide="arrow-right" class="w-4 h-4"></i>
             </button>
           </div>
@@ -409,8 +410,8 @@
         <div class="bg-white border border-slate-200/80 rounded-3xl p-8 shadow-sm">
           
           <div class="border-b border-slate-100 pb-5">
-            <h2 class="text-lg font-bold text-slate-900">How to protect your assets (Safety Shield)</h2>
-            <p class="text-xs text-slate-500 mt-0.5">Choose one of two simple actions to stop the bank from selling your shares.</p>
+            <h2 class="text-lg font-bold text-slate-900" id="step3Header">How to protect your assets (Safety Shield)</h2>
+            <p class="text-xs text-slate-500 mt-0.5" id="step3Subtext">Choose one of two simple actions to stop the bank from selling your shares.</p>
           </div>
 
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
@@ -421,15 +422,15 @@
                 <div class="w-9 h-9 rounded-xl bg-emerald-100 text-emerald-800 flex items-center justify-center font-bold text-sm mb-3">
                   A
                 </div>
-                <span class="text-xs font-bold uppercase tracking-wider text-emerald-800">Option 1: Pay Small Cash Back</span>
-                <div class="text-3xl font-black text-slate-900 mt-1.5" id="bufferCashVal">₹35,000</div>
+                <span class="text-xs font-bold uppercase tracking-wider text-emerald-800" id="opt1Title">Option 1: Pay Small Cash Back</span>
+                <div class="text-3xl font-black text-slate-900 mt-1.5" id="bufferCashVal">₹0</div>
                 <p class="text-xs text-slate-600 mt-2 leading-relaxed" id="bufferCashExplain">
-                  Pay ₹35,000 to the bank to bring your loan into the safe green zone.
+                  Pay to reduce loan balance to safe green zone.
                 </p>
               </div>
               <div class="mt-5 pt-3 border-t border-emerald-100 flex items-center gap-2 text-xs font-semibold text-emerald-700">
                 <i data-lucide="check-circle" class="w-4 h-4"></i>
-                <span>Reduces your interest immediately</span>
+                <span id="opt1Benefit">Reduces your interest immediately</span>
               </div>
             </div>
 
@@ -439,15 +440,15 @@
                 <div class="w-9 h-9 rounded-xl bg-teal-100 text-teal-800 flex items-center justify-center font-bold text-sm mb-3">
                   B
                 </div>
-                <span class="text-xs font-bold uppercase tracking-wider text-teal-800">Option 2: Pledge Safe Assets (Zero Cash)</span>
-                <div class="text-3xl font-black text-slate-900 mt-1.5" id="bufferPledgeVal">₹52,000</div>
+                <span class="text-xs font-bold uppercase tracking-wider text-teal-800" id="opt2Title">Option 2: Pledge Safe Assets (Zero Cash)</span>
+                <div class="text-3xl font-black text-slate-900 mt-1.5" id="bufferPledgeVal">₹0</div>
                 <p class="text-xs text-slate-600 mt-2 leading-relaxed" id="bufferPledgeExplain">
-                  Pledge ₹52,000 of low-risk Debt Mutual Funds or Bank FDs to absorb shocks without spending any cash.
+                  Pledge low-risk Debt Mutual Funds or Bank FDs without spending cash.
                 </p>
               </div>
               <div class="mt-5 pt-3 border-t border-teal-100 flex items-center gap-2 text-xs font-semibold text-teal-700">
                 <i data-lucide="check-circle" class="w-4 h-4"></i>
-                <span>Keep your investments & returns intact</span>
+                <span id="opt2Benefit">Keep your investments & returns intact</span>
               </div>
             </div>
 
@@ -457,9 +458,9 @@
           <div class="mt-6 p-4 rounded-2xl bg-surface-50 border border-slate-200/80 flex items-center justify-between">
             <div class="flex items-center space-x-3">
               <i data-lucide="bell" class="w-4 h-4 text-amber-600"></i>
-              <span class="text-xs text-slate-700 font-semibold">Want to see what official Depository warnings look like?</span>
+              <span class="text-xs text-slate-700 font-semibold" id="alertBannerText">Want to see what official Depository warnings look like?</span>
             </div>
-            <button onclick="openAlertModal()" class="text-xs font-bold text-emerald-700 hover:underline">
+            <button onclick="openAlertModal()" class="text-xs font-bold text-emerald-700 hover:underline" id="alertBannerBtn">
               Preview SMS / WhatsApp Alert →
             </button>
           </div>
@@ -468,11 +469,11 @@
           <div class="mt-8 pt-6 border-t border-slate-100 flex justify-between items-center">
             <button onclick="navigateToView('view-stress')" class="px-5 py-2.5 rounded-xl bg-surface-100 hover:bg-surface-200 text-slate-700 font-semibold text-xs flex items-center gap-1.5 transition">
               <i data-lucide="arrow-left" class="w-4 h-4"></i>
-              <span>Back</span>
+              <span id="step3BackBtn">Back</span>
             </button>
             <button onclick="navigateToView('view-health')" class="px-6 py-3 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs flex items-center gap-2 shadow-xs transition">
               <i data-lucide="check" class="w-4 h-4"></i>
-              <span>Back to Health Summary</span>
+              <span id="step3ResetBtn">Back to Health Summary</span>
             </button>
           </div>
 
@@ -482,21 +483,21 @@
     </div>
   </main>
 
-  <!-- ADVANCED CUSTOM PORTFOLIO & LIVE NSE BUILDER MODAL -->
+  <!-- CUSTOM PORTFOLIO BUILDER MODAL -->
   <div id="customModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-xs z-50 hidden flex items-center justify-center p-4">
     <div class="bg-white border border-slate-200 rounded-3xl max-w-2xl w-full p-6 sm:p-8 shadow-2xl space-y-5 max-h-[90vh] overflow-y-auto">
       
       <div class="flex items-center justify-between border-b border-slate-100 pb-4">
         <div>
-          <h3 class="text-lg font-bold text-slate-900">Create New Portfolio (Live NSE)</h3>
-          <p class="text-xs text-slate-500 mt-0.5">Build your portfolio with live market prices or import from a statement.</p>
+          <h3 class="text-lg font-bold text-slate-900" id="modalCreateTitle">Create New Portfolio (Live NSE)</h3>
+          <p class="text-xs text-slate-500 mt-0.5" id="modalCreateSub">Build your portfolio with live market prices or import from a statement.</p>
         </div>
         <button onclick="closeCustomModal()" class="text-slate-400 hover:text-slate-600">
           <i data-lucide="x" class="w-5 h-5"></i>
         </button>
       </div>
 
-      <!-- Mode Toggle: Interactive vs CSV -->
+      <!-- Mode Toggle -->
       <div class="flex rounded-xl bg-surface-100 p-1 border border-slate-200 text-xs font-bold">
         <button id="modeInteractiveBtn" onclick="switchBuilderMode('interactive')" class="flex-1 py-1.5 rounded-lg bg-white text-slate-900 shadow-xs">
           Interactive Stock Search
@@ -509,36 +510,34 @@
       <!-- Basic Profile Fields -->
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
         <div>
-          <label class="block text-slate-700 font-bold mb-1">Profile Name:</label>
+          <label class="block text-slate-700 font-bold mb-1" id="lblProfileName">Profile Name:</label>
           <input type="text" id="cpProfileName" value="My Loan Portfolio" class="w-full px-3.5 py-2.5 bg-surface-50 border border-slate-200 rounded-xl text-slate-900 font-semibold focus:outline-emerald-600">
         </div>
         <div>
-          <label class="block text-slate-700 font-bold mb-1">Borrower Name:</label>
+          <label class="block text-slate-700 font-bold mb-1" id="lblBorrowerName">Borrower Name:</label>
           <input type="text" id="cpBorrowerName" value="Investor" class="w-full px-3.5 py-2.5 bg-surface-50 border border-slate-200 rounded-xl text-slate-900 font-semibold focus:outline-emerald-600">
         </div>
       </div>
 
       <div class="text-xs">
-        <label class="block text-slate-700 font-bold mb-1">Loan Amount Borrowed (₹):</label>
+        <label class="block text-slate-700 font-bold mb-1" id="lblLoanAmount">Loan Amount Borrowed (₹):</label>
         <input type="number" id="cpLoanAmount" value="300000" oninput="updateBuilderSummary()" class="w-full px-3.5 py-2.5 bg-surface-50 border border-slate-200 rounded-xl text-slate-900 font-black text-sm focus:outline-emerald-600">
       </div>
 
-      <!-- INTERACTIVE MODE CONTAINER -->
+      <!-- INTERACTIVE MODE -->
       <div id="builderInteractiveSection" class="space-y-3">
         <div class="flex items-center justify-between text-xs font-bold text-slate-700">
-          <span>Pledged Holdings (Live NSE):</span>
+          <span id="lblHoldingsLive">Pledged Holdings (Live NSE):</span>
           <button onclick="addStockRow()" class="text-emerald-700 hover:text-emerald-800 flex items-center gap-1 font-bold">
             <i data-lucide="plus" class="w-3.5 h-3.5"></i>
-            <span>Add Stock</span>
+            <span id="btnAddStock">+ Add Stock</span>
           </button>
         </div>
 
-        <div id="stockRowsContainer" class="space-y-2.5 max-h-56 overflow-y-auto pr-1">
-          <!-- Dynamically populated stock rows -->
-        </div>
+        <div id="stockRowsContainer" class="space-y-2.5 max-h-56 overflow-y-auto pr-1"></div>
       </div>
 
-      <!-- CSV PASTE MODE CONTAINER -->
+      <!-- CSV PASTE MODE -->
       <div id="builderCsvSection" class="space-y-2 hidden">
         <label class="block text-xs font-bold text-slate-700">
           Paste CSV Rows <span class="text-slate-400 font-normal">(Format: Symbol, Units)</span>:
@@ -549,24 +548,24 @@
         </button>
       </div>
 
-      <!-- Real-Time Collateral & LTV Summary Box -->
+      <!-- Summary Box -->
       <div class="p-4 rounded-2xl bg-surface-50 border border-slate-200 flex items-center justify-between text-xs">
         <div>
-          <span class="text-slate-500 font-medium">Total Collateral Value:</span>
+          <span class="text-slate-500 font-medium" id="lblTotalCollateral">Total Collateral Value:</span>
           <div class="text-base font-black text-slate-900" id="builderCollateralTotal">₹0</div>
         </div>
         <div class="text-right">
-          <span class="text-slate-500 font-medium">Estimated LTV:</span>
+          <span class="text-slate-500 font-medium" id="lblEstimatedLtv">Estimated LTV:</span>
           <div class="text-base font-black text-emerald-700" id="builderLtvTotal">0.0%</div>
         </div>
       </div>
 
       <!-- Actions -->
       <div class="flex justify-end gap-3 pt-3 border-t border-slate-100">
-        <button onclick="closeCustomModal()" class="px-5 py-2.5 rounded-xl bg-surface-100 text-slate-700 text-xs font-bold hover:bg-surface-200 transition">
+        <button onclick="closeCustomModal()" class="px-5 py-2.5 rounded-xl bg-surface-100 text-slate-700 text-xs font-bold hover:bg-surface-200 transition" id="btnCancelProfile">
           Cancel
         </button>
-        <button onclick="saveAndAnalyzeCustomProfile()" class="px-6 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shadow-sm transition">
+        <button onclick="saveAndAnalyzeCustomProfile()" class="px-6 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shadow-sm transition" id="btnSaveProfile">
           Save Profile & View Dashboard
         </button>
       </div>
@@ -582,7 +581,7 @@
           <div class="w-7 h-7 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center">
             <i data-lucide="bell" class="w-4 h-4"></i>
           </div>
-          <h3 class="text-sm font-bold text-slate-900">NSDL Depository Alert Preview</h3>
+          <h3 class="text-sm font-bold text-slate-900" id="modalAlertTitle">NSDL Depository Alert Preview</h3>
         </div>
         <button onclick="closeAlertModal()" class="text-slate-400 hover:text-slate-600">
           <i data-lucide="x" class="w-5 h-5"></i>
@@ -601,7 +600,7 @@
       </div>
 
       <div class="flex justify-end pt-2">
-        <button onclick="closeAlertModal()" class="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold">
+        <button onclick="closeAlertModal()" class="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold" id="btnCloseAlert">
           Close
         </button>
       </div>
@@ -618,22 +617,167 @@
     let customProfilesList = [];
     let searchDebounceTimer = null;
 
-    const BUILTIN_PROFILES = [
-      { id: 'persona_ramesh_high_risk', name: 'Ramesh Gupta', desc: 'Loan: ₹3.8L against Smallcaps', badge: '65% LTV (At Risk)', badgeClass: 'bg-rose-100 text-rose-700 border-rose-200' },
-      { id: 'persona_priya_moderate', name: 'Priya Sharma', desc: 'Loan: ₹4.2L against Balanced MF', badge: '44% LTV (Caution)', badgeClass: 'bg-amber-50 text-amber-700 border-amber-200' },
-      { id: 'persona_sunita_conservative', name: 'Sunita Verma', desc: 'Loan: ₹2.5L against Bluechips & Debt', badge: '21% LTV (Safe)', badgeClass: 'bg-emerald-50 text-emerald-700 border-emerald-200' }
-    ];
-
-    const VIEW_META = {
-      'view-health': { heading: 'Loan Health & Safety Meter', step: 'Step 1 of 3', c1: true, c2: false, c3: false },
-      'view-stress': { heading: 'Market Crash Test', step: 'Step 2 of 3', c1: false, c2: true, c3: false },
-      'view-buffer': { heading: 'Safety Shield Plan', step: 'Step 3 of 3', c1: false, c2: false, c3: true }
+    // COMPLETE I18N DICTIONARY FOR FULL TEXT TOGGLE
+    const I18N = {
+      en: {
+        brandSubtitle: "SEBI • NSDL SANGYAN 2026",
+        profilesHeaderTitle: "Profiles",
+        newProfileBtnText: "+ New Profile",
+        journeyNavTitle: "Simple 3-Step Journey",
+        navHealthText: "Loan Health Check",
+        navStressText: "Market Crash Test",
+        navBufferText: "Safety Shield Plan",
+        voiceBtnLabel: "Listen Voice Advice",
+        langSwitchLabel: "Language:",
+        step1Indicator: "Step 1 of 3",
+        step2Indicator: "Step 2 of 3",
+        step3Indicator: "Step 3 of 3",
+        step1Heading: "Loan Health & Safety Meter",
+        step2Heading: "Market Crash Test",
+        step3Heading: "Safety Shield Plan",
+        crumb1: "1. Health",
+        crumb2: "2. Crash Test",
+        crumb3: "3. Safety Plan",
+        step1Header: "How safe is your loan today?",
+        step1Subtext: "Calculated from your pledged stocks against bank margin rules.",
+        ltvRatioLabel: "Current LTV Ratio",
+        legendSafe: "Safe (<50%)",
+        legendWarning: "Warning",
+        legendSellRisk: "Sell Risk (>75%)",
+        bufferCardTitle: "Buffer Before Bank Warning",
+        collateralLabel: "Pledged Collateral:",
+        loanBorrowedLabel: "Loan Borrowed:",
+        riskAssessmentLabel: "Risk Assessment:",
+        holdingsCardTitle: "Pledged Collateral Securities",
+        thStock: "Stock / Asset",
+        thCategory: "Category",
+        thUnits: "Units",
+        thValue: "Market Value",
+        thSensitivity: "Market Sensitivity",
+        step1NextPrompt: "Next: See what happens if the market crashes",
+        step1NextBtn: "Step 2: Test Market Crash Simulator",
+        step2Header: "What if the market falls tomorrow?",
+        step2Subtext: "Drag the slider to test market dips on your pledged portfolio.",
+        tryLabel: "Try:",
+        simFallLabel: "Simulated Market Fall:",
+        tick0: "0% (Normal)",
+        tick1: "-10% (Routine Dip)",
+        tick2: "-20% (Bear Market)",
+        tick3: "-35% (Crash)",
+        card1Label: "Your Portfolio Becomes",
+        card2Label: "New LTV Ratio",
+        card2Sub: "Limit is 75%",
+        card3Label: "Lender Action",
+        step2BackBtn: "Back",
+        step2NextBtn: "Step 3: See How to Protect Your Portfolio",
+        step3Header: "How to protect your assets (Safety Shield)",
+        step3Subtext: "Choose one of two simple actions to stop the bank from selling your shares.",
+        opt1Title: "Option 1: Pay Small Cash Back",
+        opt1Benefit: "Reduces your interest immediately",
+        opt2Title: "Option 2: Pledge Safe Assets (Zero Cash)",
+        opt2Benefit: "Keep your investments & returns intact",
+        alertBannerText: "Want to see what official Depository warnings look like?",
+        alertBannerBtn: "Preview SMS / WhatsApp Alert →",
+        step3BackBtn: "Back",
+        step3ResetBtn: "Back to Health Summary",
+        modalCreateTitle: "Create New Portfolio (Live NSE)",
+        modalCreateSub: "Build your portfolio with live market prices or import from a statement.",
+        lblProfileName: "Profile Name:",
+        lblBorrowerName: "Borrower Name:",
+        lblLoanAmount: "Loan Amount Borrowed (₹):",
+        lblHoldingsLive: "Pledged Holdings (Live NSE):",
+        btnAddStock: "+ Add Stock",
+        lblTotalCollateral: "Total Collateral Value:",
+        lblEstimatedLtv: "Estimated LTV:",
+        btnCancelProfile: "Cancel",
+        btnSaveProfile: "Save Profile & View Dashboard",
+        modalAlertTitle: "NSDL Depository Alert Preview",
+        btnCloseAlert: "Close",
+        vernacularPlayBtn: "Play"
+      },
+      hi: {
+        brandSubtitle: "सेबी • एनएसडीएल संज्ञान २०२६",
+        profilesHeaderTitle: "प्रोफ़ाइल",
+        newProfileBtnText: "+ नई प्रोफ़ाइल",
+        journeyNavTitle: "सरल ३-चरणीय प्रक्रिया",
+        navHealthText: "१. लोन स्वास्थ्य जाँच",
+        navStressText: "२. बाज़ार क्रैश टेस्ट",
+        navBufferText: "३. सुरक्षा शील्ड योजना",
+        voiceBtnLabel: "ध्वनि में सुनें",
+        langSwitchLabel: "भाषा:",
+        step1Indicator: "चरण १ / ३",
+        step2Indicator: "चरण २ / ३",
+        step3Indicator: "चरण ३ / ३",
+        step1Heading: "लोन स्वास्थ्य एवं सुरक्षा मीटर",
+        step2Heading: "बाज़ार क्रैश टेस्ट",
+        step3Heading: "सुरक्षा शील्ड योजना",
+        crumb1: "१. स्वास्थ्य",
+        crumb2: "२. क्रैश टेस्ट",
+        crumb3: "३. सुरक्षा योजना",
+        step1Header: "आज आपका लोन कितना सुरक्षित है?",
+        step1Subtext: "बैंक मार्जिन नियमों के अनुसार आपके गिरवी शेयरों से गणना की गई।",
+        ltvRatioLabel: "वर्तमान एलटीवी अनुपात",
+        legendSafe: "सुरक्षित (<५०%)",
+        legendWarning: "चेतावनी (५०-६५%)",
+        legendSellRisk: "बिक्री खतरा (>७५%)",
+        bufferCardTitle: "बैंक चेतावनी से पहले बफ़र",
+        collateralLabel: "कुल गिरवी शेयर मूल्य:",
+        loanBorrowedLabel: "लिया गया लोन:",
+        riskAssessmentLabel: "जोखिम स्तर:",
+        holdingsCardTitle: "गिरवी रखे गए शेयर व म्यूचुअल फंड",
+        thStock: "शेयर / एसेट",
+        thCategory: "श्रेणी",
+        thUnits: "शेयर संख्या",
+        thValue: "बाज़ार मूल्य",
+        thSensitivity: "बाज़ार संवेदनशीलता",
+        step1NextPrompt: "आगे: देखें कि बाज़ार गिरने पर क्या होगा",
+        step1NextBtn: "चरण २: बाज़ार क्रैश सिम्युलेटर आज़माएं",
+        step2Header: "यदि कल बाज़ार में गिरावट आती है तो क्या होगा?",
+        step2Subtext: "अपने गिरवी पोर्टफोलियो पर बाज़ार गिरावट का प्रभाव देखने के लिए स्लाइडर खींचें।",
+        tryLabel: "आज़माएं:",
+        simFallLabel: "सिम्युलेटेड बाज़ार गिरावट:",
+        tick0: "०% (सामान्य)",
+        tick1: "-१०% (सामान्य गिरावट)",
+        tick2: "-२०% (बड़ी गिरावट)",
+        tick3: "-३५% (भारी क्रैश)",
+        card1Label: "पोर्टफोलियो का नया मूल्य",
+        card2Label: "नया एलटीवी अनुपात",
+        card2Sub: "अधिकतम सीमा ७५% है",
+        card3Label: "बैंक / ऋणदाता की कार्रवाई",
+        step2BackBtn: "पीछे",
+        step2NextBtn: "चरण ३: पोर्टफोलियो को सुरक्षित करने का उपाय देखें",
+        step3Header: "अपनी संपत्ति को कैसे बचाएं (सुरक्षा शील्ड)",
+        step3Subtext: "बैंक को आपके शेयर बेचने से रोकने के लिए इन दो में से एक सरल उपाय चुनें।",
+        opt1Title: "विकल्प १: थोड़ी नकद राशि चुकाएं",
+        opt1Benefit: "तुरंत आपका ब्याज भार कम करता है",
+        opt2Title: "विकल्प २: सुरक्षित फंड गिरवी रखें (बिना नकद)",
+        opt2Benefit: "अपने निवेश और रिटर्न को सुरक्षित रखें",
+        alertBannerText: "देखना चाहते हैं कि एनएसडीएल की आधिकारिक चेतावनी कैसी दिखती है?",
+        alertBannerBtn: "एसएमएस / व्हाट्सएप चेतावनी देखें →",
+        step3BackBtn: "पीछे",
+        step3ResetBtn: "स्वास्थ्य सारांश पर वापस जाएं",
+        modalCreateTitle: "नई पोर्टफोलियो प्रोफ़ाइल बनाएं (लाइव एनएसई)",
+        modalCreateSub: "लाइव बाज़ार भाव के साथ शेयर जोड़ें या स्टेटमेंट से आयात करें।",
+        lblProfileName: "प्रोफ़ाइल का नाम:",
+        lblBorrowerName: "ऋणधारक का नाम:",
+        lblLoanAmount: "लिया गया लोन (₹):",
+        lblHoldingsLive: "गिरवी शेयर (लाइव एनएसई):",
+        btnAddStock: "+ शेयर जोड़ें",
+        lblTotalCollateral: "कुल गिरवी मूल्य:",
+        lblEstimatedLtv: "अनुमानित एलटीवी:",
+        btnCancelProfile: "रद्द करें",
+        btnSaveProfile: "प्रोफ़ाइल सहेजें और डैशबोर्ड देखें",
+        modalAlertTitle: "एनएसडीएल डिपॉजिटरी चेतावनी पूर्वावलोकन",
+        btnCloseAlert: "बंद करें",
+        vernacularPlayBtn: "आवाज सुनें"
+      }
     };
 
     window.addEventListener('DOMContentLoaded', () => {
       lucide.createIcons();
       fetchAndRenderUnifiedProfiles();
       loadPersona(currentPersonaId);
+      applyFullTranslations();
     });
 
     // View Routing
@@ -643,9 +787,17 @@
       const activePanel = document.getElementById(viewId);
       if (activePanel) activePanel.classList.remove('hidden');
 
-      const meta = VIEW_META[viewId] || { heading: 'Dashboard', step: 'Step 1 of 3' };
-      document.getElementById('pageHeading').innerText = meta.heading;
-      document.getElementById('currentStepIndicator').innerText = meta.step;
+      const t = I18N[currentLang];
+      if (viewId === 'view-health') {
+        document.getElementById('pageHeading').innerText = t.step1Heading;
+        document.getElementById('currentStepIndicator').innerText = t.step1Indicator;
+      } else if (viewId === 'view-stress') {
+        document.getElementById('pageHeading').innerText = t.step2Heading;
+        document.getElementById('currentStepIndicator').innerText = t.step2Indicator;
+      } else if (viewId === 'view-buffer') {
+        document.getElementById('pageHeading').innerText = t.step3Heading;
+        document.getElementById('currentStepIndicator').innerText = t.step3Indicator;
+      }
 
       document.querySelectorAll('.nav-item').forEach(b => {
         b.className = "nav-item w-full flex items-center space-x-3 px-3.5 py-3 rounded-xl text-xs font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-100/80 transition";
@@ -659,9 +811,9 @@
       const c2 = document.getElementById('crumb_2');
       const c3 = document.getElementById('crumb_3');
       if (c1 && c2 && c3) {
-        c1.className = meta.c1 ? "text-emerald-700 font-extrabold" : "text-slate-400";
-        c2.className = meta.c2 ? "text-emerald-700 font-extrabold" : "text-slate-400";
-        c3.className = meta.c3 ? "text-emerald-700 font-extrabold" : "text-slate-400";
+        c1.className = (viewId === 'view-health') ? "text-emerald-700 font-extrabold" : "text-slate-400";
+        c2.className = (viewId === 'view-stress') ? "text-emerald-700 font-extrabold" : "text-slate-400";
+        c3.className = (viewId === 'view-buffer') ? "text-emerald-700 font-extrabold" : "text-slate-400";
       }
 
       lucide.createIcons();
@@ -671,6 +823,7 @@
       loadPersona(id);
     }
 
+    // COMPLETE FULL-TEXT LANGUAGE SWITCHER
     function switchLanguage(lang) {
       currentLang = lang;
       const enBtn = document.getElementById('langEnBtn');
@@ -678,18 +831,28 @@
       if (lang === 'en') {
         enBtn.className = "px-2.5 py-0.5 rounded-md bg-white text-slate-900 shadow-xs";
         hiBtn.className = "px-2.5 py-0.5 rounded-md text-slate-600 hover:text-slate-900";
-        document.getElementById('voiceBtnLabel').innerText = "Listen Voice Advice";
       } else {
         hiBtn.className = "px-2.5 py-0.5 rounded-md bg-white text-slate-900 shadow-xs";
         enBtn.className = "px-2.5 py-0.5 rounded-md text-slate-600 hover:text-slate-900";
-        document.getElementById('voiceBtnLabel').innerText = "ध्वनि में सुनें";
       }
+      applyFullTranslations();
       if (currentAnalysis) {
         updateVernacularText(currentAnalysis.vernacular[currentLang]);
       }
     }
 
-    // Unified Profiles Loader
+    function applyFullTranslations() {
+      const t = I18N[currentLang];
+      for (const [key, val] of Object.entries(t)) {
+        const el = document.getElementById(key);
+        if (el) {
+          el.innerText = val;
+        }
+      }
+      navigateToView(currentView);
+    }
+
+    // Unified Profiles Loader (ALL PROFILES DELETABLE)
     async function fetchAndRenderUnifiedProfiles() {
       try {
         const res = await fetch('/api/custom-profiles');
@@ -703,33 +866,19 @@
       const container = document.getElementById('unifiedProfilesList');
       container.innerHTML = '';
 
-      // 1. Render Builtin Profiles
-      BUILTIN_PROFILES.forEach(p => {
-        const div = document.createElement('div');
-        div.className = "w-full";
-        div.innerHTML = `
-          <button onclick="switchPersona('${p.id}')" id="btn_${p.id}" class="profile-card w-full text-left p-3 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 transition flex items-center justify-between shadow-2xs">
-            <div>
-              <div class="text-xs font-bold text-slate-900">${p.name}</div>
-              <div class="text-[11px] text-slate-500">${p.desc}</div>
-            </div>
-            <span class="text-[10px] font-bold px-2 py-0.5 rounded-full border ${p.badgeClass}">
-              ${p.badge}
-            </span>
-          </button>
-        `;
-        container.appendChild(div);
-      });
+      if (customProfilesList.length === 0) {
+        container.innerHTML = '<div class="text-xs text-slate-400 p-2">No profiles. Click + New Profile to create one.</div>';
+        return;
+      }
 
-      // 2. Render Custom Profiles in the SAME list
       customProfilesList.forEach(p => {
         const div = document.createElement('div');
         div.className = "flex items-center space-x-1";
         div.innerHTML = `
           <button onclick="switchPersona('${p.id}')" id="btn_${p.id}" class="profile-card flex-1 text-left p-3 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 transition shadow-2xs">
             <div class="flex items-center justify-between">
-              <div class="text-xs font-bold text-slate-900 truncate">${p.name || 'Custom'}</div>
-              <span class="text-[10px] font-bold px-1.5 py-0.2 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">${p.current_ltv_pct}% LTV</span>
+              <div class="text-xs font-bold text-slate-900 truncate">${p.name || 'Profile'}</div>
+              <span class="text-[10px] font-bold px-1.5 py-0.2 rounded-full border ${p.badge_class || 'bg-slate-50 text-slate-700 border-slate-200'}">${p.current_ltv_pct}% LTV</span>
             </div>
             <div class="text-[11px] text-slate-500">Loan: ₹${Math.round(p.loan_outstanding).toLocaleString('en-IN')}</div>
           </button>
@@ -745,12 +894,15 @@
     }
 
     async function deleteProfile(id) {
-      if (!confirm("Are you sure you want to remove this profile?")) return;
+      if (!confirm("Are you sure you want to delete this profile?")) return;
       try {
         await fetch(`/api/custom-profiles/${id}`, { method: 'DELETE' });
         await fetchAndRenderUnifiedProfiles();
         if (currentPersonaId === id) {
-          switchPersona('persona_ramesh_high_risk');
+          if (customProfilesList.length > 0) {
+            const nextP = customProfilesList.find(p => p.id !== id);
+            if (nextP) switchPersona(nextP.id);
+          }
         }
       } catch (e) {
         console.error(e);
@@ -791,18 +943,26 @@
       const ml = data.ml_vulnerability;
       const r = data.remedies;
 
-      // Update borrower title in header
       if (data.persona) {
         document.getElementById('activeBorrowerTitle').innerText = `Borrower: ${data.persona.borrower_name || data.persona.name}`;
       }
 
-      // 1. Gauge needle
+      // ========================================================
+      // FIXED 180-DEGREE GAUGE NEEDLE MATH (NEVER DIPS BELOW HORIZON)
+      // Needle is drawn at 12 o'clock (0 deg).
+      // 0% LTV -> -90 deg (horizontal left, 9 o'clock)
+      // 50% LTV -> 0 deg (straight up, 12 o'clock)
+      // 100% LTV -> +90 deg (horizontal right, 3 o'clock)
+      // ========================================================
       const ltvClamped = Math.min(Math.max(m.current_ltv, 0.0), 1.0);
-      const angle = -180 + (ltvClamped * 180);
-      document.getElementById('needleGroup').style.transform = `rotate(${angle}deg)`;
+      const angle = -90 + (ltvClamped * 180);
+      const needle = document.getElementById('needleGroup');
+      if (needle) {
+        needle.setAttribute('transform', `rotate(${angle} 100 100)`);
+      }
       document.getElementById('healthLtvNumber').innerText = `${m.current_ltv_pct}%`;
 
-      // Badge
+      // Status Badge
       const badge = document.getElementById('healthStatusBadge');
       badge.innerText = m.status_label;
       if (m.status_zone === 'SAFE_GREEN') {
@@ -813,25 +973,35 @@
         badge.className = "self-start sm:self-auto text-xs font-extrabold px-3 py-1 rounded-full bg-rose-50 text-rose-700 border border-rose-200";
       }
 
-      // Simple Distance
-      document.getElementById('healthDropText').innerText = `Only ${m.drop_to_margin_call_pct}% market drop`;
-      document.getElementById('healthDropExplanation').innerText = `If the market drops by ${m.drop_to_margin_call_pct}%, your lender will trigger a margin call demanding immediate money.`;
+      // Plain language distance
+      if (currentLang === 'hi') {
+        document.getElementById('healthDropText').innerText = `केवल ${m.drop_to_margin_call_pct}% बाज़ार गिरावट`;
+        document.getElementById('healthDropExplanation').innerText = `यदि बाज़ार केवल ${m.drop_to_margin_call_pct}% गिरता है, तो बैंक तुरंत मार्जिन कॉल भेज देगा।`;
+      } else {
+        document.getElementById('healthDropText').innerText = `Only ${m.drop_to_margin_call_pct}% market drop`;
+        document.getElementById('healthDropExplanation').innerText = `If the market drops by ${m.drop_to_margin_call_pct}%, your lender will trigger a margin call demanding immediate money.`;
+      }
 
       document.getElementById('healthCollateralVal').innerText = `₹${Math.round(m.total_collateral_value).toLocaleString('en-IN')}`;
       document.getElementById('healthLoanVal').innerText = `₹${Math.round(m.loan_outstanding).toLocaleString('en-IN')}`;
       document.getElementById('healthVulnerabilityBadge').innerText = `${ml.vulnerability_score}/100 (${ml.risk_grade})`;
 
-      // 2. Buffer Remedies
+      // Buffer Remedies
       document.getElementById('bufferCashVal').innerText = `₹${Math.round(r.cash_prepayment_remedy.amount_inr).toLocaleString('en-IN')}`;
-      document.getElementById('bufferCashExplain').innerText = `Pay ₹${Math.round(r.cash_prepayment_remedy.amount_inr).toLocaleString('en-IN')} to the bank to bring your loan into the safe green zone.`;
-
       document.getElementById('bufferPledgeVal').innerText = `₹${Math.round(r.pledge_collateral_remedy.amount_inr).toLocaleString('en-IN')}`;
-      document.getElementById('bufferPledgeExplain').innerText = `Pledge ₹${Math.round(r.pledge_collateral_remedy.amount_inr).toLocaleString('en-IN')} of low-risk Debt Mutual Funds or Bank FDs to absorb shocks without spending any cash.`;
 
-      // 3. Pledged Holdings Table (Inline in Step 1)
+      if (currentLang === 'hi') {
+        document.getElementById('bufferCashExplain').innerText = `लोन को सुरक्षित हरे क्षेत्र में लाने के लिए बैंक को ₹${Math.round(r.cash_prepayment_remedy.amount_inr).toLocaleString('en-IN')} का भुगतान करें।`;
+        document.getElementById('bufferPledgeExplain').innerText = `बिना नकद खर्च किए ₹${Math.round(r.pledge_collateral_remedy.amount_inr).toLocaleString('en-IN')} के सुरक्षित डेट फंड या एफडी गिरवी रखें।`;
+      } else {
+        document.getElementById('bufferCashExplain').innerText = `Pay ₹${Math.round(r.cash_prepayment_remedy.amount_inr).toLocaleString('en-IN')} to the bank to bring your loan into the safe green zone.`;
+        document.getElementById('bufferPledgeExplain').innerText = `Pledge ₹${Math.round(r.pledge_collateral_remedy.amount_inr).toLocaleString('en-IN')} of low-risk Debt Mutual Funds or Bank FDs to absorb shocks without spending any cash.`;
+      }
+
+      // Inline Pledged Holdings
       const tb = document.getElementById('holdingsTableBody');
       tb.innerHTML = '';
-      document.getElementById('holdingsCountLabel').innerText = `${m.holdings.length} securities pledged`;
+      document.getElementById('holdingsCountLabel').innerText = `${m.holdings.length} ${currentLang === 'hi' ? 'शेयर/फंड गिरवी' : 'holdings pledged'}`;
 
       m.holdings.forEach(h => {
         const tr = document.createElement('tr');
@@ -841,12 +1011,11 @@
           <td class="py-2.5 px-3 text-slate-600">${h.category}</td>
           <td class="py-2.5 px-3 text-slate-600">${h.units.toLocaleString()}</td>
           <td class="py-2.5 px-3 font-semibold text-slate-900">₹${Math.round(h.current_value).toLocaleString('en-IN')}</td>
-          <td class="py-2.5 px-3 font-semibold ${h.beta > 1.3 ? 'text-rose-600' : 'text-emerald-700'}">${h.beta > 1.3 ? 'High (' + h.beta + ')' : 'Moderate (' + h.beta + ')'}</td>
+          <td class="py-2.5 px-3 font-semibold ${h.beta > 1.3 ? 'text-rose-600' : 'text-emerald-700'}">${h.beta > 1.3 ? (currentLang === 'hi' ? 'उच्च' : 'High') + ' (' + h.beta + ')' : (currentLang === 'hi' ? 'मध्यम' : 'Moderate') + ' (' + h.beta + ')'}</td>
         `;
         tb.appendChild(tr);
       });
 
-      // 4. Vernacular & Alert
       updateVernacularText(data.vernacular[currentLang]);
       loadAlertPayload();
     }
@@ -898,24 +1067,26 @@
         });
         const sim = await res.json();
         document.getElementById('stressCollateralVal').innerText = `₹${Math.round(sim.simulated_collateral_value).toLocaleString('en-IN')}`;
-        document.getElementById('stressWealthLoss').innerText = `-₹${Math.round(sim.total_wealth_lost).toLocaleString('en-IN')} drop`;
+        document.getElementById('stressWealthLoss').innerText = `-₹${Math.round(sim.total_wealth_lost).toLocaleString('en-IN')} ${currentLang === 'hi' ? 'नुकसान' : 'drop'}`;
         document.getElementById('stressLtvVal').innerText = `${sim.simulated_ltv_pct}%`;
 
         const st = document.getElementById('stressActionStatus');
         const dt = document.getElementById('stressActionDetail');
 
         if (sim.liquidation_breached) {
-          st.innerText = "FORCED SALE!";
+          st.innerText = currentLang === 'hi' ? "ज़बरन बिक्री (FORCED SALE)!" : "FORCED SALE!";
           st.className = "text-base font-black text-rose-600";
-          dt.innerText = `Bank will sell ₹${Math.round(sim.liquidation_dump_amount).toLocaleString('en-IN')} shares`;
+          dt.innerText = currentLang === 'hi' 
+            ? `बैंक ₹${Math.round(sim.liquidation_dump_amount).toLocaleString('en-IN')} के शेयर तुरंत बेचेगा` 
+            : `Bank will sell ₹${Math.round(sim.liquidation_dump_amount).toLocaleString('en-IN')} shares`;
         } else if (sim.margin_call_breached) {
-          st.innerText = "Margin Call Warning";
+          st.innerText = currentLang === 'hi' ? "मार्जिन कॉल चेतावनी!" : "Margin Call Warning";
           st.className = "text-base font-black text-amber-600";
-          dt.innerText = "2 hours notice to add funds";
+          dt.innerText = currentLang === 'hi' ? "२ घंटे में अतिरिक्त राशि जोड़ें" : "2 hours notice to add funds";
         } else {
-          st.innerText = "Safe & Protected";
+          st.innerText = currentLang === 'hi' ? "सुरक्षित एवं संरक्षित" : "Safe & Protected";
           st.className = "text-base font-black text-emerald-600";
-          dt.innerText = "No action needed";
+          dt.innerText = currentLang === 'hi' ? "किसी कार्रवाई की आवश्यकता नहीं" : "No action needed";
         }
       } catch (e) {
         console.error(e);

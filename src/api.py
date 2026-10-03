@@ -124,25 +124,22 @@ def analyze_loan(req: AnalyzeRequest):
     persona_meta = None
     cash_buffer = req.borrower_cash_buffer
 
-    # 1. Check Predefined Personas
-    if req.persona_id and req.persona_id in INVESTOR_PERSONAS:
+    # 1. First check unified profiles store
+    custom_list = list_custom_profiles()
+    matched = next((c for c in custom_list if c["id"] == req.persona_id), None)
+    if matched:
+        persona_meta = matched
+        holdings_data = matched.get("holdings", [])
+        loan_amount = float(matched.get("loan_outstanding", 0.0))
+        cash_buffer = float(matched.get("borrower_cash_buffer", 25000.0))
+    elif req.persona_id and req.persona_id in INVESTOR_PERSONAS:
         p = INVESTOR_PERSONAS[req.persona_id]
         persona_meta = p
         holdings_data = p["holdings"]
         loan_amount = p["loan_outstanding"]
         cash_buffer = p.get("borrower_cash_buffer", cash_buffer)
-    
-    # 2. Check Custom User Profiles
-    elif req.persona_id and req.persona_id.startswith("custom_"):
-        custom_list = list_custom_profiles()
-        matched = next((c for c in custom_list if c["id"] == req.persona_id), None)
-        if matched:
-            persona_meta = matched
-            holdings_data = matched.get("holdings", [])
-            loan_amount = float(matched.get("loan_outstanding", 0.0))
-            cash_buffer = float(matched.get("borrower_cash_buffer", 25000.0))
-        else:
-            raise HTTPException(status_code=404, detail="Custom profile not found")
+    elif req.persona_id:
+        raise HTTPException(status_code=404, detail="Profile not found")
 
     # 3. Ad-hoc custom input
     elif req.holdings and req.loan_outstanding:
@@ -213,16 +210,15 @@ def stress_test(req: StressTestRequest):
     holdings_data = []
     loan_amount = 0.0
 
-    if req.persona_id and req.persona_id in INVESTOR_PERSONAS:
+    custom_list = list_custom_profiles()
+    matched = next((c for c in custom_list if c["id"] == req.persona_id), None)
+    if matched:
+        holdings_data = matched.get("holdings", [])
+        loan_amount = float(matched.get("loan_outstanding", 0.0))
+    elif req.persona_id and req.persona_id in INVESTOR_PERSONAS:
         p = INVESTOR_PERSONAS[req.persona_id]
         holdings_data = p["holdings"]
         loan_amount = p["loan_outstanding"]
-    elif req.persona_id and req.persona_id.startswith("custom_"):
-        custom_list = list_custom_profiles()
-        matched = next((c for c in custom_list if c["id"] == req.persona_id), None)
-        if matched:
-            holdings_data = matched.get("holdings", [])
-            loan_amount = float(matched.get("loan_outstanding", 0.0))
     elif req.holdings and req.loan_outstanding:
         holdings_data = [h.dict() for h in req.holdings]
         loan_amount = req.loan_outstanding
