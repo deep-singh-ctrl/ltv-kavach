@@ -32,7 +32,7 @@
     }
   </script>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Noto+Sans+Devanagari:wght@400;500;600;700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Noto+Sans+Devanagari:wght@400;600;700&display=swap');
     body {
       font-family: 'Plus Jakarta Sans', 'Noto Sans Devanagari', -apple-system, BlinkMacSystemFont, sans-serif;
     }
@@ -57,7 +57,7 @@
 
   <!-- LEFT SIDEBAR: Clean, Soft Light Design -->
   <aside class="w-full md:w-80 bg-white border-r border-slate-200/80 flex flex-col justify-between flex-shrink-0 shadow-sm z-30">
-    <div>
+    <div class="overflow-y-auto max-h-[calc(100vh-140px)]">
       <!-- Header / Logo -->
       <div class="p-6 border-b border-slate-100">
         <div class="flex items-center space-x-3">
@@ -82,15 +82,16 @@
       <div class="p-5 border-b border-slate-100">
         <div class="flex items-center justify-between mb-2.5">
           <span class="text-xs font-bold uppercase tracking-wider text-slate-400">
-            Select Borrower Profile
+            Borrower Profiles
           </span>
-          <button onclick="openCustomPortfolioModal()" class="text-xs font-semibold text-emerald-600 hover:text-emerald-700">
-            + Custom
+          <button onclick="openCustomPortfolioModal()" class="text-xs font-bold text-emerald-600 hover:text-emerald-700 flex items-center gap-1">
+            <i data-lucide="plus" class="w-3.5 h-3.5"></i>
+            <span>Create Profile</span>
           </button>
         </div>
 
-        <div class="space-y-2">
-          <!-- Ramesh -->
+        <!-- Predefined Personas -->
+        <div class="space-y-2" id="personaButtonsGroup">
           <button onclick="switchPersona('persona_ramesh_high_risk')" id="btn_ramesh" class="w-full text-left p-3 rounded-xl border border-rose-200 bg-rose-50/40 hover:bg-rose-50/80 transition flex items-center justify-between shadow-xs">
             <div>
               <div class="text-xs font-bold text-slate-900">Ramesh Gupta</div>
@@ -101,7 +102,6 @@
             </span>
           </button>
 
-          <!-- Priya -->
           <button onclick="switchPersona('persona_priya_moderate')" id="btn_priya" class="w-full text-left p-3 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 transition flex items-center justify-between shadow-xs">
             <div>
               <div class="text-xs font-bold text-slate-900">Priya Sharma</div>
@@ -112,7 +112,6 @@
             </span>
           </button>
 
-          <!-- Sunita -->
           <button onclick="switchPersona('persona_sunita_conservative')" id="btn_sunita" class="w-full text-left p-3 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 transition flex items-center justify-between shadow-xs">
             <div>
               <div class="text-xs font-bold text-slate-900">Sunita Verma</div>
@@ -122,6 +121,16 @@
               21% LTV (Safe)
             </span>
           </button>
+        </div>
+
+        <!-- Dynamic User Saved Profiles Container -->
+        <div id="customProfilesSection" class="mt-4 pt-3 border-t border-slate-100 hidden">
+          <span class="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-2">
+            My Custom Portfolios (Live NSE)
+          </span>
+          <div id="customProfilesList" class="space-y-1.5">
+            <!-- Dynamically populated from /api/custom-profiles -->
+          </div>
         </div>
       </div>
 
@@ -559,7 +568,99 @@
     </div>
   </main>
 
-  <!-- PLEDGED HOLDINGS MODAL (Tucked away cleanly) -->
+  <!-- ADVANCED CUSTOM PORTFOLIO & LIVE NSE BUILDER MODAL -->
+  <div id="customModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-xs z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white border border-slate-200 rounded-3xl max-w-2xl w-full p-6 sm:p-8 shadow-2xl space-y-5 max-h-[90vh] overflow-y-auto">
+      
+      <div class="flex items-center justify-between border-b border-slate-100 pb-4">
+        <div>
+          <h3 class="text-lg font-bold text-slate-900">Create Custom Loan Profile (Live NSE)</h3>
+          <p class="text-xs text-slate-500 mt-0.5">Build your portfolio with live market prices or import from a statement.</p>
+        </div>
+        <button onclick="closeCustomModal()" class="text-slate-400 hover:text-slate-600">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <!-- Mode Toggle: Interactive vs CSV -->
+      <div class="flex rounded-xl bg-surface-100 p-1 border border-slate-200 text-xs font-bold">
+        <button id="modeInteractiveBtn" onclick="switchBuilderMode('interactive')" class="flex-1 py-1.5 rounded-lg bg-white text-slate-900 shadow-xs">
+          Interactive Stock Search
+        </button>
+        <button id="modeCsvBtn" onclick="switchBuilderMode('csv')" class="flex-1 py-1.5 rounded-lg text-slate-600 hover:text-slate-900">
+          Paste CSV / Statement
+        </button>
+      </div>
+
+      <!-- Basic Profile Fields -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
+        <div>
+          <label class="block text-slate-700 font-bold mb-1">Profile Name:</label>
+          <input type="text" id="cpProfileName" value="My Loan Portfolio" class="w-full px-3.5 py-2.5 bg-surface-50 border border-slate-200 rounded-xl text-slate-900 font-semibold focus:outline-emerald-600">
+        </div>
+        <div>
+          <label class="block text-slate-700 font-bold mb-1">Borrower Name:</label>
+          <input type="text" id="cpBorrowerName" value="Investor" class="w-full px-3.5 py-2.5 bg-surface-50 border border-slate-200 rounded-xl text-slate-900 font-semibold focus:outline-emerald-600">
+        </div>
+      </div>
+
+      <div class="text-xs">
+        <label class="block text-slate-700 font-bold mb-1">Loan Amount Borrowed (₹):</label>
+        <input type="number" id="cpLoanAmount" value="300000" oninput="updateBuilderSummary()" class="w-full px-3.5 py-2.5 bg-surface-50 border border-slate-200 rounded-xl text-slate-900 font-black text-sm focus:outline-emerald-600">
+      </div>
+
+      <!-- INTERACTIVE MODE CONTAINER -->
+      <div id="builderInteractiveSection" class="space-y-3">
+        <div class="flex items-center justify-between text-xs font-bold text-slate-700">
+          <span>Pledged Holdings (Live NSE):</span>
+          <button onclick="addStockRow()" class="text-emerald-700 hover:text-emerald-800 flex items-center gap-1 font-bold">
+            <i data-lucide="plus" class="w-3.5 h-3.5"></i>
+            <span>Add Stock</span>
+          </button>
+        </div>
+
+        <div id="stockRowsContainer" class="space-y-2.5 max-h-56 overflow-y-auto pr-1">
+          <!-- Dynamically populated stock rows -->
+        </div>
+      </div>
+
+      <!-- CSV PASTE MODE CONTAINER -->
+      <div id="builderCsvSection" class="space-y-2 hidden">
+        <label class="block text-xs font-bold text-slate-700">
+          Paste CSV Rows <span class="text-slate-400 font-normal">(Format: Symbol, Units)</span>:
+        </label>
+        <textarea id="cpCsvText" rows="5" class="w-full px-3 py-2 bg-surface-50 border border-slate-200 rounded-xl font-mono text-xs text-slate-800" placeholder="RELIANCE, 100&#10;TCS, 50&#10;TATAMOTORS, 200"></textarea>
+        <button onclick="parseAndLoadCsv()" class="px-3.5 py-1.5 rounded-lg bg-surface-100 hover:bg-surface-200 text-slate-800 text-xs font-bold transition">
+          Parse & Fetch Live NSE Quotes
+        </button>
+      </div>
+
+      <!-- Real-Time Collateral & LTV Summary Box -->
+      <div class="p-4 rounded-2xl bg-surface-50 border border-slate-200 flex items-center justify-between text-xs">
+        <div>
+          <span class="text-slate-500 font-medium">Total Collateral Value:</span>
+          <div class="text-base font-black text-slate-900" id="builderCollateralTotal">₹0</div>
+        </div>
+        <div class="text-right">
+          <span class="text-slate-500 font-medium">Estimated LTV:</span>
+          <div class="text-base font-black text-emerald-700" id="builderLtvTotal">0.0%</div>
+        </div>
+      </div>
+
+      <!-- Actions -->
+      <div class="flex justify-end gap-3 pt-3 border-t border-slate-100">
+        <button onclick="closeCustomModal()" class="px-5 py-2.5 rounded-xl bg-surface-100 text-slate-700 text-xs font-bold hover:bg-surface-200 transition">
+          Cancel
+        </button>
+        <button onclick="saveAndAnalyzeCustomProfile()" class="px-6 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shadow-sm transition">
+          Save & Open in Dashboard
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- PLEDGED HOLDINGS MODAL -->
   <div id="holdingsModal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-xs z-50 hidden flex items-center justify-center p-4">
     <div class="bg-white border border-slate-200 rounded-3xl max-w-2xl w-full p-6 shadow-xl space-y-4">
       <div class="flex items-center justify-between border-b border-slate-100 pb-3">
@@ -628,50 +729,13 @@
     </div>
   </div>
 
-  <!-- CUSTOM PORTFOLIO MODAL -->
-  <div id="customModal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-xs z-50 hidden flex items-center justify-center p-4">
-    <div class="bg-white border border-slate-200 rounded-3xl max-w-md w-full p-6 shadow-xl space-y-4">
-      <div class="flex items-center justify-between border-b border-slate-100 pb-3">
-        <h3 class="text-sm font-bold text-slate-900">Custom Loan & Stock Input</h3>
-        <button onclick="closeCustomModal()" class="text-slate-400 hover:text-slate-600">
-          <i data-lucide="x" class="w-5 h-5"></i>
-        </button>
-      </div>
-
-      <div class="space-y-3 text-xs">
-        <div>
-          <label class="block text-slate-700 font-bold mb-1">Loan Amount (₹):</label>
-          <input type="number" id="customLoanInput" value="350000" class="w-full px-3 py-2 bg-surface-50 border border-slate-200 rounded-xl text-slate-900 font-semibold">
-        </div>
-        <div>
-          <label class="block text-slate-700 font-bold mb-1">Stock 1 (Symbol & Rupee Value):</label>
-          <div class="grid grid-cols-2 gap-2">
-            <input type="text" id="customH1Symbol" value="RELIANCE" class="px-3 py-2 bg-surface-50 border border-slate-200 rounded-xl text-slate-900 uppercase font-semibold">
-            <input type="number" id="customH1Val" value="250000" class="px-3 py-2 bg-surface-50 border border-slate-200 rounded-xl text-slate-900 font-semibold">
-          </div>
-        </div>
-        <div>
-          <label class="block text-slate-700 font-bold mb-1">Stock 2 (Symbol & Rupee Value):</label>
-          <div class="grid grid-cols-2 gap-2">
-            <input type="text" id="customH2Symbol" value="SUZLON" class="px-3 py-2 bg-surface-50 border border-slate-200 rounded-xl text-slate-900 uppercase font-semibold">
-            <input type="number" id="customH2Val" value="250000" class="px-3 py-2 bg-surface-50 border border-slate-200 rounded-xl text-slate-900 font-semibold">
-          </div>
-        </div>
-      </div>
-
-      <div class="flex justify-end gap-2 pt-2 border-t border-slate-100">
-        <button onclick="closeCustomModal()" class="px-4 py-2 rounded-xl bg-slate-100 text-slate-700 text-xs font-bold">Cancel</button>
-        <button onclick="applyCustomPortfolio()" class="px-4 py-2 rounded-xl bg-emerald-600 text-white text-xs font-bold hover:bg-emerald-700">Analyze</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- JAVASCRIPT APP LOGIC -->
+  <!-- JAVASCRIPT APPLICATION LOGIC -->
   <script>
     let currentPersonaId = 'persona_ramesh_high_risk';
     let currentAnalysis = null;
     let currentLang = 'hi';
     let currentView = 'view-health';
+    let builderRows = [];
 
     const VIEW_META = {
       'view-health': { heading: 'Loan Health & Safety Meter', step: 'Step 1 of 3', c1: true, c2: false, c3: false },
@@ -682,10 +746,12 @@
 
     window.addEventListener('DOMContentLoaded', () => {
       lucide.createIcons();
+      loadCustomProfilesList();
       loadPersona(currentPersonaId);
       runSandboxCalc();
     });
 
+    // View Routing
     function navigateToView(viewId) {
       currentView = viewId;
       document.querySelectorAll('.view-panel').forEach(p => p.classList.add('hidden'));
@@ -696,7 +762,6 @@
       document.getElementById('pageHeading').innerText = meta.heading;
       document.getElementById('currentStepIndicator').innerText = meta.step;
 
-      // Update sidebar nav buttons
       document.querySelectorAll('.nav-item').forEach(b => {
         b.className = "nav-item w-full flex items-center space-x-3 px-3.5 py-3 rounded-xl text-xs font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-100/80 transition";
       });
@@ -705,7 +770,6 @@
         activeNav.className = "nav-item w-full flex items-center space-x-3 px-3.5 py-3 rounded-xl text-xs font-bold bg-emerald-600 text-white shadow-sm transition";
       }
 
-      // Update Breadcrumbs
       const c1 = document.getElementById('crumb_1');
       const c2 = document.getElementById('crumb_2');
       const c3 = document.getElementById('crumb_3');
@@ -760,19 +824,80 @@
     }
 
     function highlightPersona(id) {
-      ['btn_ramesh', 'btn_priya', 'btn_sunita'].forEach(b => {
-        const el = document.getElementById(b);
-        if (el) el.classList.remove('ring-2', 'ring-emerald-500', 'border-emerald-500');
+      // Clear all
+      document.querySelectorAll('#personaButtonsGroup button').forEach(b => {
+        b.classList.remove('ring-2', 'ring-emerald-500', 'border-emerald-500');
       });
+      document.querySelectorAll('#customProfilesList button').forEach(b => {
+        b.classList.remove('ring-2', 'ring-emerald-500', 'bg-emerald-50/50');
+      });
+
       if (id === 'persona_ramesh_high_risk') {
-        document.getElementById('btn_ramesh').classList.add('ring-2', 'ring-rose-400');
+        const el = document.getElementById('btn_ramesh');
+        if (el) el.classList.add('ring-2', 'ring-rose-400');
         document.getElementById('activeBorrowerTitle').innerText = "Borrower: Ramesh Gupta (Indore)";
       } else if (id === 'persona_priya_moderate') {
-        document.getElementById('btn_priya').classList.add('ring-2', 'ring-amber-400');
+        const el = document.getElementById('btn_priya');
+        if (el) el.classList.add('ring-2', 'ring-amber-400');
         document.getElementById('activeBorrowerTitle').innerText = "Borrower: Priya Sharma (Jaipur)";
       } else if (id === 'persona_sunita_conservative') {
-        document.getElementById('btn_sunita').classList.add('ring-2', 'ring-emerald-500');
+        const el = document.getElementById('btn_sunita');
+        if (el) el.classList.add('ring-2', 'ring-emerald-500');
         document.getElementById('activeBorrowerTitle').innerText = "Borrower: Sunita Verma (Patna)";
+      } else if (id.startsWith('custom_')) {
+        const customEl = document.getElementById('btn_' + id);
+        if (customEl) customEl.classList.add('ring-2', 'ring-emerald-500', 'bg-emerald-50/50');
+        if (currentAnalysis && currentAnalysis.persona) {
+          document.getElementById('activeBorrowerTitle').innerText = `Borrower: ${currentAnalysis.persona.borrower_name || currentAnalysis.persona.name}`;
+        }
+      }
+    }
+
+    // Load & Render Custom Profiles in Sidebar
+    async function loadCustomProfilesList() {
+      try {
+        const res = await fetch('/api/custom-profiles');
+        const data = await res.json();
+        const list = data.profiles || [];
+        const container = document.getElementById('customProfilesList');
+        const section = document.getElementById('customProfilesSection');
+
+        if (list.length > 0) {
+          section.classList.remove('hidden');
+          container.innerHTML = '';
+          list.forEach(p => {
+            const div = document.createElement('div');
+            div.className = "flex items-center space-x-1";
+            div.innerHTML = `
+              <button onclick="switchPersona('${p.id}')" id="btn_${p.id}" class="flex-1 text-left p-2.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 transition text-xs shadow-2xs">
+                <div class="font-bold text-slate-900 truncate">${p.name || 'Custom Portfolio'}</div>
+                <div class="text-[10px] text-slate-500">Loan: ₹${Math.round(p.loan_outstanding).toLocaleString('en-IN')} (${p.current_ltv_pct}% LTV)</div>
+              </button>
+              <button onclick="deleteProfile('${p.id}')" class="p-2 text-slate-400 hover:text-rose-600 rounded-lg hover:bg-rose-50" title="Delete profile">
+                <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+              </button>
+            `;
+            container.appendChild(div);
+          });
+          lucide.createIcons();
+        } else {
+          section.classList.add('hidden');
+        }
+      } catch (e) {
+        console.error(e);
+      }
+    }
+
+    async function deleteProfile(id) {
+      if (!confirm("Are you sure you want to delete this custom profile?")) return;
+      try {
+        await fetch(`/api/custom-profiles/${id}`, { method: 'DELETE' });
+        loadCustomProfilesList();
+        if (currentPersonaId === id) {
+          switchPersona('persona_ramesh_high_risk');
+        }
+      } catch (e) {
+        console.error(e);
       }
     }
 
@@ -781,13 +906,11 @@
       const ml = data.ml_vulnerability;
       const r = data.remedies;
 
-      // 1. Gauge needle
       const ltvClamped = Math.min(Math.max(m.current_ltv, 0.0), 1.0);
       const angle = -180 + (ltvClamped * 180);
       document.getElementById('needleGroup').style.transform = `rotate(${angle}deg)`;
       document.getElementById('healthLtvNumber').innerText = `${m.current_ltv_pct}%`;
 
-      // Badge
       const badge = document.getElementById('healthStatusBadge');
       badge.innerText = m.status_label;
       if (m.status_zone === 'SAFE_GREEN') {
@@ -798,7 +921,6 @@
         badge.className = "self-start sm:self-auto text-xs font-extrabold px-3 py-1 rounded-full bg-rose-50 text-rose-700 border border-rose-200";
       }
 
-      // Simple Distance
       document.getElementById('healthDropText').innerText = `Only ${m.drop_to_margin_call_pct}% market drop`;
       document.getElementById('healthDropExplanation').innerText = `If the market drops by ${m.drop_to_margin_call_pct}%, your lender will trigger a margin call demanding immediate money.`;
 
@@ -806,14 +928,12 @@
       document.getElementById('healthLoanVal').innerText = `₹${Math.round(m.loan_outstanding).toLocaleString('en-IN')}`;
       document.getElementById('healthVulnerabilityBadge').innerText = `${ml.vulnerability_score}/100 (${ml.risk_grade})`;
 
-      // 2. Buffer Remedies
       document.getElementById('bufferCashVal').innerText = `₹${Math.round(r.cash_prepayment_remedy.amount_inr).toLocaleString('en-IN')}`;
       document.getElementById('bufferCashExplain').innerText = `Pay ₹${Math.round(r.cash_prepayment_remedy.amount_inr).toLocaleString('en-IN')} to the bank to bring your loan into the safe green zone.`;
 
       document.getElementById('bufferPledgeVal').innerText = `₹${Math.round(r.pledge_collateral_remedy.amount_inr).toLocaleString('en-IN')}`;
       document.getElementById('bufferPledgeExplain').innerText = `Pledge ₹${Math.round(r.pledge_collateral_remedy.amount_inr).toLocaleString('en-IN')} of low-risk Debt Mutual Funds or Bank FDs to absorb shocks without spending any cash.`;
 
-      // 3. Holdings Table
       const tb = document.getElementById('holdingsTableBody');
       tb.innerHTML = '';
       m.holdings.forEach(h => {
@@ -829,7 +949,6 @@
         tb.appendChild(tr);
       });
 
-      // 4. Vernacular
       updateVernacularText(data.vernacular[currentLang]);
       loadAlertPayload();
     }
@@ -858,7 +977,6 @@
       window.speechSynthesis.speak(u);
     }
 
-    // Stress testing slider
     async function handleSliderChange(val) {
       const dropPct = -1 * (parseFloat(val) / 100.0);
       document.getElementById('sliderDisplay').innerText = `${(-val).toFixed(1)}%`;
@@ -949,33 +1067,228 @@
       }
     }
 
+    // Modal Helpers
     function openAlertModal() { document.getElementById('alertModal').classList.remove('hidden'); }
     function closeAlertModal() { document.getElementById('alertModal').classList.add('hidden'); }
     function openHoldingsModal() { document.getElementById('holdingsModal').classList.remove('hidden'); }
     function closeHoldingsModal() { document.getElementById('holdingsModal').classList.add('hidden'); }
-    function openCustomPortfolioModal() { document.getElementById('customModal').classList.remove('hidden'); }
-    function closeCustomModal() { document.getElementById('customModal').classList.add('hidden'); }
+    
+    // CUSTOM PORTFOLIO BUILDER LOGIC
+    function openCustomPortfolioModal() {
+      document.getElementById('customModal').classList.remove('hidden');
+      if (builderRows.length === 0) {
+        builderRows = [
+          { id: 1, symbol: 'RELIANCE', units: 100, price: 1167.7, name: 'Reliance Industries Ltd' },
+          { id: 2, symbol: 'TCS', units: 50, price: 2075.0, name: 'Tata Consultancy Services Ltd' }
+        ];
+        renderStockRows();
+      }
+      updateBuilderSummary();
+    }
 
-    async function applyCustomPortfolio() {
-      const loan = parseFloat(document.getElementById('customLoanInput').value);
-      const holdings = [
-        { symbol: document.getElementById('customH1Symbol').value, units: 1, current_value: parseFloat(document.getElementById('customH1Val').value) },
-        { symbol: document.getElementById('customH2Symbol').value, units: 1, current_value: parseFloat(document.getElementById('customH2Val').value) },
-      ];
-      currentPersonaId = null;
+    function closeCustomModal() {
+      document.getElementById('customModal').classList.add('hidden');
+    }
+
+    function switchBuilderMode(mode) {
+      const iBtn = document.getElementById('modeInteractiveBtn');
+      const cBtn = document.getElementById('modeCsvBtn');
+      const iSec = document.getElementById('builderInteractiveSection');
+      const cSec = document.getElementById('builderCsvSection');
+
+      if (mode === 'interactive') {
+        iBtn.className = "flex-1 py-1.5 rounded-lg bg-white text-slate-900 shadow-xs";
+        cBtn.className = "flex-1 py-1.5 rounded-lg text-slate-600 hover:text-slate-900";
+        iSec.classList.remove('hidden');
+        cSec.classList.add('hidden');
+      } else {
+        cBtn.className = "flex-1 py-1.5 rounded-lg bg-white text-slate-900 shadow-xs";
+        iBtn.className = "flex-1 py-1.5 rounded-lg text-slate-600 hover:text-slate-900";
+        cSec.classList.remove('hidden');
+        iSec.classList.add('hidden');
+      }
+    }
+
+    function addStockRow() {
+      const newId = Date.now();
+      builderRows.push({ id: newId, symbol: 'INFY', units: 50, price: 1820.0, name: 'Infosys Ltd' });
+      renderStockRows();
+      updateBuilderSummary();
+    }
+
+    function removeStockRow(id) {
+      builderRows = builderRows.filter(r => r.id !== id);
+      renderStockRows();
+      updateBuilderSummary();
+    }
+
+    function renderStockRows() {
+      const container = document.getElementById('stockRowsContainer');
+      container.innerHTML = '';
+      builderRows.forEach((r, idx) => {
+        const div = document.createElement('div');
+        div.className = "p-3 rounded-xl bg-surface-50 border border-slate-200 flex flex-wrap sm:flex-nowrap items-center gap-2 text-xs";
+        div.innerHTML = `
+          <div class="relative flex-1">
+            <input type="text" value="${r.symbol}" oninput="searchStockDropdown(this.value, ${idx})" onblur="hideDropdownDelayed(${idx})" placeholder="Search stock (e.g. Tata)" class="w-full px-2.5 py-1.5 bg-white border border-slate-200 rounded-lg text-slate-900 font-bold uppercase focus:outline-emerald-600">
+            <div id="dropdown_${idx}" class="absolute top-full left-0 right-0 bg-white border border-slate-200 rounded-xl shadow-lg mt-1 z-50 hidden max-h-40 overflow-y-auto"></div>
+          </div>
+          <div class="w-24">
+            <input type="number" value="${r.units}" oninput="updateRowUnits(${idx}, this.value)" placeholder="Units" class="w-full px-2.5 py-1.5 bg-white border border-slate-200 rounded-lg text-slate-900 font-semibold focus:outline-emerald-600">
+          </div>
+          <div class="text-right w-28">
+            <span class="font-bold text-slate-900 block">₹${Math.round(r.units * r.price).toLocaleString('en-IN')}</span>
+            <span class="text-[10px] text-slate-500">₹${r.price}/sh</span>
+          </div>
+          <button onclick="removeStockRow(${r.id})" class="p-1.5 text-slate-400 hover:text-rose-600 rounded-lg">
+            <i data-lucide="trash" class="w-4 h-4"></i>
+          </button>
+        `;
+        container.appendChild(div);
+      });
+      lucide.createIcons();
+    }
+
+    async function searchStockDropdown(q, rowIdx) {
+      if (!q || q.length < 2) return;
       try {
-        const res = await fetch('/api/analyze', {
+        const res = await fetch(`/api/stocks/search?q=${encodeURIComponent(q)}`);
+        const data = await res.json();
+        const dd = document.getElementById(`dropdown_${rowIdx}`);
+        if (!dd) return;
+
+        dd.innerHTML = '';
+        if (data.results && data.results.length > 0) {
+          dd.classList.remove('hidden');
+          data.results.forEach(s => {
+            const item = document.createElement('div');
+            item.className = "px-3 py-2 hover:bg-emerald-50 cursor-pointer border-b border-slate-100 last:border-0";
+            item.innerHTML = `
+              <div class="font-bold text-slate-900">${s.symbol} <span class="text-emerald-700 font-semibold">₹${s.base_price}</span></div>
+              <div class="text-[10px] text-slate-500 truncate">${s.name}</div>
+            `;
+            item.onmousedown = () => selectStockForRow(rowIdx, s.symbol);
+            dd.appendChild(item);
+          });
+        }
+      } catch (e) {
+        console.error(e);
+      }
+    }
+
+    function hideDropdownDelayed(idx) {
+      setTimeout(() => {
+        const dd = document.getElementById(`dropdown_${idx}`);
+        if (dd) dd.classList.add('hidden');
+      }, 200);
+    }
+
+    async function selectStockForRow(idx, symbol) {
+      try {
+        const res = await fetch(`/api/stocks/quote/${symbol}`);
+        const quote = await res.json();
+        builderRows[idx].symbol = quote.symbol;
+        builderRows[idx].price = quote.price;
+        builderRows[idx].name = quote.name;
+        builderRows[idx].beta = quote.beta;
+        builderRows[idx].haircut = quote.haircut;
+        renderStockRows();
+        updateBuilderSummary();
+      } catch (e) {
+        console.error(e);
+      }
+    }
+
+    function updateRowUnits(idx, val) {
+      builderRows[idx].units = parseFloat(val) || 0;
+      updateBuilderSummary();
+      // Update subtotal text directly
+      renderStockRows();
+    }
+
+    function updateBuilderSummary() {
+      const loan = parseFloat(document.getElementById('cpLoanAmount').value) || 0;
+      let totalCollateral = 0;
+      builderRows.forEach(r => {
+        totalCollateral += (r.units * r.price);
+      });
+      document.getElementById('builderCollateralTotal').innerText = `₹${Math.round(totalCollateral).toLocaleString('en-IN')}`;
+      const ltv = totalCollateral > 0 ? ((loan / totalCollateral) * 100).toFixed(1) : 0;
+      document.getElementById('builderLtvTotal').innerText = `${ltv}%`;
+    }
+
+    async function parseAndLoadCsv() {
+      const csvText = document.getElementById('cpCsvText').value.trim();
+      if (!csvText) {
+        alert("Please paste CSV text first (e.g. RELIANCE, 100)");
+        return;
+      }
+      try {
+        const res = await fetch('/api/import-csv', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ holdings, loan_outstanding: loan })
+          body: JSON.stringify({ csv_text: csvText })
         });
-        const d = await res.json();
-        currentAnalysis = d;
-        renderData(d);
+        const data = await res.json();
+        if (data.holdings && data.holdings.length > 0) {
+          builderRows = data.holdings.map((h, i) => ({
+            id: Date.now() + i,
+            symbol: h.symbol,
+            units: h.units,
+            price: h.price,
+            name: h.name,
+            beta: h.beta,
+            haircut: h.haircut
+          }));
+          switchBuilderMode('interactive');
+          renderStockRows();
+          updateBuilderSummary();
+        } else {
+          alert("Could not parse any holdings from CSV. Ensure format is: Symbol, Units");
+        }
+      } catch (e) {
+        alert("CSV Import error: " + e);
+      }
+    }
+
+    async function saveAndAnalyzeCustomProfile() {
+      const name = document.getElementById('cpProfileName').value.trim() || "My Loan Portfolio";
+      const borrower = document.getElementById('cpBorrowerName').value.trim() || "Investor";
+      const loan = parseFloat(document.getElementById('cpLoanAmount').value) || 200000;
+
+      if (builderRows.length === 0) {
+        alert("Please add at least one stock to your portfolio.");
+        return;
+      }
+
+      const payload = {
+        name: name,
+        borrower_name: borrower,
+        loan_outstanding: loan,
+        holdings: builderRows.map(r => ({
+          symbol: r.symbol,
+          units: r.units,
+          price: r.price,
+          name: r.name,
+          beta: r.beta || 1.1,
+          haircut: r.haircut || 0.25
+        }))
+      };
+
+      try {
+        const res = await fetch('/api/custom-profiles', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        const savedProfile = data.profile;
         closeCustomModal();
+        await loadCustomProfilesList();
+        switchPersona(savedProfile.id);
         navigateToView('view-health');
       } catch (e) {
-        alert('Error: ' + e);
+        alert("Error saving profile: " + e);
       }
     }
   </script>

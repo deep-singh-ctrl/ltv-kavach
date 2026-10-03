@@ -1,0 +1,31 @@
+[
+  {
+    "name": "Deepank Personal Portfolio",
+    "borrower_name": "Deepank Singh",
+    "location": "Varanasi",
+    "loan_outstanding": 250000,
+    "holdings": [
+      {
+        "symbol": "RELIANCE",
+        "units": 100,
+        "price": 1167.7,
+        "beta": 0.95,
+        "haircut": 0.2,
+        "name": "Reliance Industries Ltd",
+        "current_value": 116770.0
+      },
+      {
+        "symbol": "TCS",
+        "units": 50,
+        "price": 2075.0,
+        "beta": 0.78,
+        "haircut": 0.2,
+        "name": "Tata Consultancy Services Ltd",
+        "current_value": 103750.0
+      }
+    ],
+    "id": "custom_7c9b2769",
+    "total_collateral": 220520.0,
+    "current_ltv_pct": 113.4
+  }
+]

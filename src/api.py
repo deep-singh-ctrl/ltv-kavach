@@ -1,5 +1,6 @@
 """
 FastAPI Endpoints for LTV-Kavach Investor Resilience Platform.
+Includes Live Market Data, Custom Profiles & CSV Statement Parsing.
 """
 
 import sys
@@ -20,6 +21,13 @@ from src.risk_engine import (
 )
 from src.ml_model import ml_engine
 from src.vernacular_engine import generate_vernacular_guidance
+from src.market_data import search_indian_stocks, fetch_live_stock_quote
+from src.profile_store import (
+    list_custom_profiles,
+    save_custom_profile,
+    delete_custom_profile,
+    parse_csv_statement
+)
 
 router = APIRouter(prefix="/api")
 
@@ -27,6 +35,11 @@ class HoldingItem(BaseModel):
     symbol: str
     units: float
     current_value: Optional[float] = None
+    price: Optional[float] = None
+    name: Optional[str] = None
+    category: Optional[str] = None
+    beta: Optional[float] = None
+    haircut: Optional[float] = None
 
 class AnalyzeRequest(BaseModel):
     persona_id: Optional[str] = None
@@ -49,6 +62,9 @@ class SandboxRequest(BaseModel):
     proposed_loan_amount: float
     portfolio_beta: float = 1.0
 
+class CsvImportRequest(BaseModel):
+    csv_text: str
+
 @router.get("/personas")
 def get_personas():
     """Returns pre-configured investor loan personas."""
@@ -64,27 +80,76 @@ def get_asset_catalog():
     """Returns sample reference equities and mutual funds."""
     return {"catalog": ASSET_CATALOG}
 
+@router.get("/stocks/search")
+def search_stocks(q: str = ""):
+    """Live search across 100+ Indian stocks, mutual funds and ETFs."""
+    return {"results": search_indian_stocks(q)}
+
+@router.get("/stocks/quote/{symbol}")
+def get_quote(symbol: str):
+    """Fetches real-time price & beta for any NSE stock."""
+    return fetch_live_stock_quote(symbol)
+
+@router.get("/custom-profiles")
+def get_custom_profiles():
+    """Returns all user-created persistent borrower profiles."""
+    return {"profiles": list_custom_profiles()}
+
+@router.post("/custom-profiles")
+def create_custom_profile(profile: Dict[str, Any]):
+    """Saves or updates a persistent custom user profile."""
+    saved = save_custom_profile(profile)
+    return {"profile": saved}
+
+@router.delete("/custom-profiles/{profile_id}")
+def remove_custom_profile(profile_id: str):
+    """Deletes a custom user profile."""
+    success = delete_custom_profile(profile_id)
+    return {"success": success}
+
+@router.post("/import-csv")
+def import_csv(req: CsvImportRequest):
+    """Parses portfolio CSV text into structured holdings with live prices."""
+    holdings = parse_csv_statement(req.csv_text)
+    return {"holdings": holdings}
+
 @router.post("/analyze")
 def analyze_loan(req: AnalyzeRequest):
     """
     Complete analysis pipeline: Quantitative Risk + Explainable ML + Buffer Remedies + Vernacular.
+    Supports predefined personas, custom saved profiles, or ad-hoc holdings.
     """
     holdings_data = []
     loan_amount = 0.0
     persona_meta = None
     cash_buffer = req.borrower_cash_buffer
 
+    # 1. Check Predefined Personas
     if req.persona_id and req.persona_id in INVESTOR_PERSONAS:
         p = INVESTOR_PERSONAS[req.persona_id]
         persona_meta = p
         holdings_data = p["holdings"]
         loan_amount = p["loan_outstanding"]
         cash_buffer = p.get("borrower_cash_buffer", cash_buffer)
+    
+    # 2. Check Custom User Profiles
+    elif req.persona_id and req.persona_id.startswith("custom_"):
+        custom_list = list_custom_profiles()
+        matched = next((c for c in custom_list if c["id"] == req.persona_id), None)
+        if matched:
+            persona_meta = matched
+            holdings_data = matched.get("holdings", [])
+            loan_amount = float(matched.get("loan_outstanding", 0.0))
+            cash_buffer = float(matched.get("borrower_cash_buffer", 25000.0))
+        else:
+            raise HTTPException(status_code=404, detail="Custom profile not found")
+
+    # 3. Ad-hoc custom input
     elif req.holdings and req.loan_outstanding:
         holdings_data = [h.dict() for h in req.holdings]
         loan_amount = req.loan_outstanding
     else:
-        # Default to high-risk persona for instant demonstration
+        # Default fallback
         p = INVESTOR_PERSONAS["persona_ramesh_high_risk"]
         persona_meta = p
         holdings_data = p["holdings"]
@@ -113,7 +178,6 @@ def analyze_loan(req: AnalyzeRequest):
     # 3. Machine Learning Vulnerability Prediction
     top1_share = metrics["top1_share_pct"] / 100.0
     buffer_ratio = cash_buffer / max(loan_amount, 1.0)
-    # Estimate annual vol from portfolio beta
     estimated_annual_vol = 0.15 + (metrics["portfolio_beta"] * 0.12)
 
     ml_prediction = ml_engine.predict_vulnerability(
@@ -153,6 +217,12 @@ def stress_test(req: StressTestRequest):
         p = INVESTOR_PERSONAS[req.persona_id]
         holdings_data = p["holdings"]
         loan_amount = p["loan_outstanding"]
+    elif req.persona_id and req.persona_id.startswith("custom_"):
+        custom_list = list_custom_profiles()
+        matched = next((c for c in custom_list if c["id"] == req.persona_id), None)
+        if matched:
+            holdings_data = matched.get("holdings", [])
+            loan_amount = float(matched.get("loan_outstanding", 0.0))
     elif req.holdings and req.loan_outstanding:
         holdings_data = [h.dict() for h in req.holdings]
         loan_amount = req.loan_outstanding
@@ -173,9 +243,6 @@ def stress_test(req: StressTestRequest):
 
 @router.post("/sandbox-borrow")
 def pre_loan_sandbox(req: SandboxRequest):
-    """
-    Evaluates safety limits before a user pledges collateral.
-    """
     return simulate_pre_loan_sandbox(
         portfolio_value=req.portfolio_value,
         proposed_loan_amount=req.proposed_loan_amount,
@@ -184,36 +251,41 @@ def pre_loan_sandbox(req: SandboxRequest):
 
 @router.get("/depository-alert-preview/{persona_id}")
 def depository_alert_preview(persona_id: str):
-    """
-    Mocks an official NSDL Depository Pledge Alert message sent via SMS / WhatsApp.
-    """
-    p = INVESTOR_PERSONAS.get(persona_id, INVESTOR_PERSONAS["persona_ramesh_high_risk"])
+    p = None
+    if persona_id in INVESTOR_PERSONAS:
+        p = INVESTOR_PERSONAS[persona_id]
+    elif persona_id.startswith("custom_"):
+        custom_list = list_custom_profiles()
+        p = next((c for c in custom_list if c["id"] == persona_id), None)
+
+    if not p:
+        p = INVESTOR_PERSONAS["persona_ramesh_high_risk"]
+
     metrics = calculate_portfolio_metrics(p["holdings"], p["loan_outstanding"])
-    
+    lender = p.get("lender", "Your NBFC Lender")
+    name = p.get("name", "Investor")
+
     sms_text = (
-        f"[NSDL-KAVACH ALERT] Dear Investor ({p['name']}), your pledged securities against loan from "
-        f"{p['lender']} have reached an LTV of {metrics['current_ltv_pct']}%. "
-        f"Margin maintenance line is {round(p['lender_maintenance_ltv']*100)}%. "
+        f"[NSDL-KAVACH ALERT] Dear {name}, your pledged collateral with {lender} "
+        f"has an LTV of {metrics['current_ltv_pct']}%. "
         f"A market drop of {metrics['drop_to_margin_call_pct']}% will trigger lender liquidation. "
-        f"Verify your portfolio buffer at ltvkavach.nsdl.org"
+        f"Check safety buffer at ltvkavach.nsdl.org"
     )
 
     whatsapp_text = (
-        f"🛡️ *NSDL PLEDGE COLLATERAL EARLY WARNING*\n\n"
-        f"Dear *{p['name']}*,\n"
-        f"Depository Participant: *NSDL / 003841*\n"
-        f"Lender: *{p['lender']}*\n\n"
-        f"⚠️ *Current LTV Status:* {metrics['current_ltv_pct']}%\n"
+        f"🛡️ *NSDL COLLATERAL RESILIENCE ALERT*\n\n"
+        f"Dear *{name}*,\n"
+        f"Lender: *{lender}*\n\n"
+        f"⚠️ *Current LTV:* {metrics['current_ltv_pct']}%\n"
         f"📉 *Distance to Margin Call:* {metrics['drop_to_margin_call_pct']}%\n"
-        f"💰 *Collateral Value:* ₹{metrics['total_collateral_value']:,}\n"
-        f"💳 *Loan Outstanding:* ₹{metrics['loan_outstanding']:,}\n\n"
-        f"💡 *Recommended Buffer Action:* Prepay ₹{round(max(0, metrics['loan_outstanding'] - metrics['total_collateral_value']*0.45)):,} "
-        f"or pledge low-volatility debt funds to prevent forced market dumping.\n\n"
-        f"_This is a public investor protection alert issued in public interest under SEBI / NSDL Investor Resilience Guidelines._"
+        f"💰 *Pledged Portfolio Value:* ₹{metrics['total_collateral_value']:,}\n"
+        f"💳 *Loan Borrowed:* ₹{metrics['loan_outstanding']:,}\n\n"
+        f"💡 *Resilience Buffer Recommendation:* Pay ₹{round(max(0, metrics['loan_outstanding'] - metrics['total_collateral_value']*0.45)):,} "
+        f"or pledge low-risk debt funds to protect against forced selling."
     )
 
     return {
-        "recipient": p["name"],
+        "recipient": name,
         "phone_masked": "+91 98XXX XX041",
         "sms_message": sms_text,
         "whatsapp_message": whatsapp_text
