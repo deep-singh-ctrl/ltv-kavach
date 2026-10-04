@@ -23,3 +23,6 @@ htmlcov/
 # Operating system files
 .DS_Store
 Thumbs.db
+
+# Local binaries and tunnels
+.bin/
