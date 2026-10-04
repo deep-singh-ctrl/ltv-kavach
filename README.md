@@ -214,17 +214,5 @@ python3 tests/test_risk_engine.py
 
 ---
 
-## 🏆 SANGYAN Evaluation Criteria Matrix
-
-| Criterion | Weight | How LTV-Kavach Meets the Standard |
-| :--- | :---: | :--- |
-| **Resilience & Safety Impact** | **30%** | Transforms panic-inducing margin calls into calm, zero-cash Demat OTP recovery steps and proactive de-risking swaps. |
-| **Tier-2/3 Usability (Bharat-First)** | **25%** | Full Hindi vernacular translation, spoken audio guidance, simplified 2-step journey, and plain-language tooltips. |
-| **Trust & Guardrail Compliance** | **15%** | **Strictly compliant**: No stock tips, no trading algorithms, no loan broker commissions, no commercial ads. |
-| **Technical Execution** | **15%** | Fast quantitative engine, Scikit-learn Random Forest model, dynamic print styling, and 100% test coverage. |
-| **Feasibility & Scalability** | **15%** | Pluggable into NSDL/CDSL depository pledge APIs and RBI Account Aggregator (AA) rails for nationwide deployment. |
-
----
-
 ## 📜 License
 Distributed under the **MIT Open Source License** for public good financial literacy and investor protection. Built for **SEBI • NSDL SANGYAN 2026**.
