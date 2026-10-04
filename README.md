@@ -2,7 +2,7 @@
 ### Public-Good Investor Resilience & Collateral Guardian for Loan Against Securities (LAS)
 **Submission for SEBI • NSDL SANGYAN Investor Resilience Hackathon 2026**
 
-[![Live Demo](https://img.shields.io/badge/Live_Demo-Cloudflare_HTTPS-emerald.svg)](https://sparc-draw-affected-walking.trycloudflare.com)
+[![Live Demo](https://img.shields.io/badge/Live_Demo-Cloudflare_HTTPS-emerald.svg)](https://copyrights-agreed-janet-plc.trycloudflare.com)
 [![GitHub Repo](https://img.shields.io/badge/GitHub-deep--singh--ctrl%2Fltv--kavach-blue.svg)](https://github.com/deep-singh-ctrl/ltv-kavach)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.100+-009688.svg)](https://fastapi.tiangolo.com/)
@@ -13,7 +13,7 @@
 
 ## 🌐 Live Application Link
 
-> **Try the Live App Now**: **[https://sparc-draw-affected-walking.trycloudflare.com](https://sparc-draw-affected-walking.trycloudflare.com)**  
+> **Try the Live App Now**: **[https://copyrights-agreed-janet-plc.trycloudflare.com](https://copyrights-agreed-janet-plc.trycloudflare.com)**  
 > *(Live public link. No login or installation required. Works on desktop and mobile).*
 
 ---
@@ -85,7 +85,7 @@ LTV-Kavach teaches borrowers the rights lenders often hide:
 
 | Feature | Description |
 | :--- | :--- |
-| **🌐 Live Cloud Link** | Accessible online via secure HTTPS tunnel: [Try Live Demo](https://sparc-draw-affected-walking.trycloudflare.com). |
+| **🌐 Live Cloud Link** | Accessible online via secure HTTPS tunnel: [Try Live Demo](https://copyrights-agreed-janet-plc.trycloudflare.com). |
 | **🇮🇳 100% Bilingual (Hindi ⇄ English)** | Full interface toggle with spoken vernacular voice guidance (`SpeechSynthesis`). |
 | **🎓 First-Time Borrower Guide** | 4 simple interactive lessons on LTV formulas, legal rights, beta volatility, and zero-cash pledging. |
 | **📄 1-Page Resilience Certificate** | Generates a clean, printable PDF report for the borrower (`Ctrl+P` / Print button). |
