@@ -142,26 +142,37 @@ flowchart TD
 
 ---
 
-## 📊 Quantitative Models & Formulas
+## 📊 Quantitative Models & Real-World Formulas
 
-### 1. Portfolio Beta ($\beta_p$)
-$$\beta_p = \sum_{i=1}^n w_i \cdot \beta_i \quad \text{where } w_i = \frac{V_i}{\sum_{j=1}^n V_j}$$
+### 1. Effective Debt & Unserviced Interest Creep
+In Indian LAS overdraft facilities, interest is computed daily at benchmark rate $r = 10.5\% \text{ p.a.}$ Unpaid interest adds directly to the debt:
+$$D_{\text{effective}} = D_{\text{principal}} + \text{round}\left( \frac{D_{\text{principal}} \times r \times t_{\text{days}}}{365} \right)$$
 
-### 2. Market Drop Distance to Warning Buffer
-$$\text{Drop Required to hit } \text{LTV}_{\text{warn}} = 1 - \frac{\text{Loan}}{\text{Total Collateral} \times \text{LTV}_{\text{warn}}}$$
+### 2. Dual Regulatory LTV Formulation
+- **Gross Market LTV (RBI Benchmark Ratio)**:
+  $$\text{LTV}_{\text{gross}} = \left( \frac{D_{\text{effective}}}{\sum_{i=1}^n V_i} \right) \times 100$$
+  *Governs RBI prudential limits: $\le 50\%$ (Safe/Cap), $50\% - 65\%$ (Statutory Cure Notice), $\ge 75\%$ (Liquidation).*
+
+- **Post-Haircut Drawing Power & Effective LTV**:
+  $$\text{Drawing Power} = \sum_{i=1}^n V_i \times (1 - H_i)$$
+  $$\text{LTV}_{\text{effective}} = \left( \frac{D_{\text{effective}}}{\text{Drawing Power}} \right) \times 100$$
+  *Where $H_i$ represents the regulatory haircut ($10\% - 15\%$ for Debt MFs, $20\% - 30\%$ for Nifty 50 Bluechips, $40\% - 50\%$ for Smallcaps).*
+
+### 3. Market Drop Distance to Warning Buffer
+$$\text{Drop Required to hit } \text{LTV}_{\text{warn}} = 1 - \frac{D_{\text{effective}}}{\text{Total Collateral} \times \text{LTV}_{\text{warn}}}$$
 $$\text{Market Drop Cushion} = \frac{\text{Drop Required}}{\beta_p}$$
 
-### 3. Calm Remedies
-- **Cash Paydown**:
-  $$\text{Cash Required} = \max\left(0, \; \text{Loan} - \text{Safe LTV Target} \times \text{Collateral}\right)$$
-- **Zero-Cash Collateral Top-Up**:
-  $$\text{Collateral Top-up} = \max\left(0, \; \frac{\text{Loan}}{\text{Safe LTV Target}} - \text{Collateral}\right)$$
-- **Monthly Interest Savings**:
+### 4. RBI 50% Shortfall & Calm Remedies
+- **RBI 50% Shortfall**:
+  $$\text{Shortfall}_{\text{RBI}} = \max\left(0, \; D_{\text{effective}} - (0.50 \times \text{Collateral})\right)$$
+- **Monthly Interest Savings via Cash Paydown**:
   $$\Delta I_{\text{monthly}} = \frac{\text{Cash Paydown} \times 10.5\%}{12}$$
+- **Zero-Cash Collateral Top-Up**:
+  $$\text{Collateral Top-up} = \max\left(0, \; \frac{D_{\text{effective}}}{0.45} - \text{Collateral}\right)$$
 
-### 4. Concentration Index (HHI)
+### 5. Concentration Index (HHI)
 $$\text{HHI} = \sum_{i=1}^n (w_i \times 100)^2$$
-*(HHI > 2,500 indicates high single-stock vulnerability).*
+*(HHI > 2,500 indicates dangerous single-stock concentration).*
 
 ---
 

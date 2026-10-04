@@ -218,10 +218,13 @@ def simulate_market_shock(
     market_drop_pct: float,  # e.g., -0.10 for -10% drop
     maintenance_ltv: float = 0.65,
     liquidation_ltv: float = 0.75,
-    safe_target_ltv: float = 0.45
+    safe_target_ltv: float = 0.45,
+    days_unpaid_interest: int = 0,
+    annual_interest_rate: float = 0.105
 ) -> Dict[str, Any]:
     """
-    Simulates portfolio stress under broad market shocks, adjusting for individual asset betas.
+    Simulates portfolio stress under broad market shocks, adjusting for individual asset betas,
+    regulatory haircuts, post-haircut drawing power, accrued interest accumulation, and RBI LAS guidelines.
     """
     base_metrics = calculate_portfolio_metrics(
         holdings, loan_outstanding, maintenance_ltv, liquidation_ltv, safe_target_ltv
@@ -235,54 +238,94 @@ def simulate_market_shock(
     if market_drop_pct > 0:
         market_drop_pct = -market_drop_pct
 
+    # Real-life Nuance 1: Accrued Unserviced Interest adds to effective debt
+    accrued_interest = round((loan_outstanding * annual_interest_rate * max(0, days_unpaid_interest)) / 365.0, 2)
+    effective_debt = round(loan_outstanding + accrued_interest, 2)
+
     simulated_collateral_value = 0.0
+    simulated_eligible_value = 0.0
     simulated_holdings = []
 
     for h in base_metrics["holdings"]:
         beta = h["beta"]
+        haircut = h.get("haircut", 0.30)
         # Stock specific drop adjusted by beta
         stock_drop = market_drop_pct * beta
         # Clamp maximum realistic loss to -95%
         stock_drop = max(stock_drop, -0.95)
         new_val = max(0.0, h["current_value"] * (1.0 + stock_drop))
+        new_eligible_val = max(0.0, new_val * (1.0 - haircut))
+
         simulated_collateral_value += new_val
+        simulated_eligible_value += new_eligible_val
+
         simulated_holdings.append({
             **h,
             "simulated_drop_pct": round(stock_drop * 100.0, 2),
             "simulated_value": round(new_val, 2),
+            "simulated_eligible_value": round(new_eligible_val, 2),
+            "haircut_pct": round(haircut * 100.0, 1),
             "value_loss": round(h["current_value"] - new_val, 2)
         })
 
-    simulated_ltv = round(loan_outstanding / max(simulated_collateral_value, 1.0), 4)
+    # Real-life Nuance 2: Gross LTV vs Post-Haircut Effective LTV (Drawing Power)
+    simulated_ltv = round(effective_debt / max(simulated_collateral_value, 1.0), 4)
+    simulated_effective_ltv = round(effective_debt / max(simulated_eligible_value, 1.0), 4)
+    drawing_power_deficit = round(max(0.0, effective_debt - simulated_eligible_value), 2)
     total_wealth_lost = round(base_metrics["total_collateral_value"] - simulated_collateral_value, 2)
 
-    # Determine simulated status
-    if simulated_ltv < safe_target_ltv:
+    # Real-life Nuance 3: RBI 50% Prudential Target & Shortfall
+    rbi_50pct_shortfall = round(max(0.0, effective_debt - (0.50 * simulated_collateral_value)), 2)
+
+    # Real-life Nuance 4: RBI Regulatory Cure Timeline & Status
+    if simulated_ltv <= 0.50:
         zone = "SAFE_GREEN"
-        severity = "Low Risk: Collateral remains resilient."
-    elif simulated_ltv < maintenance_ltv:
+        severity = "Low Risk: Within RBI 50% prudential LTV cap. Resilient cushion."
+        rbi_milestone_code = "PRUDENTIAL_SAFE"
+        rbi_milestone_tag_en = "Safe Buffer (<= 50% LTV)"
+        rbi_milestone_tag_hi = "सुरक्षित स्तर (<= ५०% एलटीवी)"
+        rbi_cure_notice_en = "RBI Compliant: Within RBI 50% prudential LTV ceiling. Healthy equity cushion."
+        rbi_cure_notice_hi = "आरबीआई मानक अनुरूप: ५०% सीमा के भीतर। सुरक्षित सुरक्षा कुशन।"
+        rbi_cure_days = 0
+    elif simulated_ltv <= maintenance_ltv:
         zone = "MODERATE_YELLOW"
-        severity = "Moderate Risk: Buffer tightening, monitor closely."
+        severity = f"RBI Shortfall Notice: LTV reached {round(simulated_ltv*100, 1)}% (above 50% RBI cap)."
+        rbi_milestone_code = "STATUTORY_7_DAY_CURE"
+        rbi_milestone_tag_en = "RBI 7-Day Cure Notice (50%-65%)"
+        rbi_milestone_tag_hi = "आरबीआई ७-दिवसीय वैधानिक सूचना (५०%-६५%)"
+        rbi_cure_notice_en = "RBI 7-Working-Day Cure Window: Under RBI LAS norms, borrowers must be granted 7 working days to regularize margins before any market action."
+        rbi_cure_notice_hi = "आरबीआई ७-कार्यदिवस राहत अवधि: आरबीआई नियमों के अनुसार किसी भी कार्रवाई से पहले मार्जिन बहाली के लिए ७ कार्यदिवस की वैधानिक छूट मिलती है।"
+        rbi_cure_days = 7
     elif simulated_ltv < liquidation_ltv:
         zone = "WARNING_AMBER"
-        severity = f"MARGIN CALL TRIGGERED! LTV reached {round(simulated_ltv*100, 1)}%."
+        severity = f"EMERGENCY MARGIN CALL! LTV reached {round(simulated_ltv*100, 1)}%."
+        rbi_milestone_code = "CRITICAL_MARGIN_CALL"
+        rbi_milestone_tag_en = "Emergency Margin Call (65%-75%)"
+        rbi_milestone_tag_hi = "आपातकालीन मार्जिन कॉल (६५%-७५%)"
+        rbi_cure_notice_en = "Emergency Margin Call: Formal demand to cure within 24-48 hours. Pledging spare securities stops forced sales."
+        rbi_cure_notice_hi = "आपातकालीन मार्जिन कॉल: २४-४८ घंटे के भीतर मार्जिन भरने की मांग। अतिरिक्त शेयर गिरवी रखकर बिक्री रोकें।"
+        rbi_cure_days = 2
     else:
         zone = "CRITICAL_RED"
         severity = f"FORCED LIQUIDATION! LTV breached {round(simulated_ltv*100, 1)}%."
+        rbi_milestone_code = "LIQUIDATION_CUTOFF"
+        rbi_milestone_tag_en = "Liquidation Trigger (> 75%)"
+        rbi_milestone_tag_hi = "ज़बरन बिक्री सीमा पार (> ७५%)"
+        rbi_cure_notice_en = "Liquidation Trigger: LTV exceeded 75%. Lender invokes demat pledge to recover deficit."
+        rbi_cure_notice_hi = "ज़बरन बिक्री सीमा पार: एलटीवी ७५% पार। बैंक को शेयर बेचकर लोन वसूलने का अधिकार सक्रिय।"
+        rbi_cure_days = 0
 
     # If liquidation triggered, calculate amount lender will dump at market price
     liquidation_dump_amount = 0.0
     if simulated_ltv >= liquidation_ltv:
-        # Amount to sell to bring LTV back to safe 50%:
-        # (Loan - 0.50 * Collateral) / (1 - 0.50)
         target = 0.50
         if simulated_collateral_value > 0:
-            excess_debt = loan_outstanding - (target * simulated_collateral_value)
+            excess_debt = effective_debt - (target * simulated_collateral_value)
             liquidation_dump_amount = max(0.0, excess_debt / (1.0 - target))
             liquidation_dump_amount = min(liquidation_dump_amount, simulated_collateral_value)
 
     simulated_remedies = calculate_buffer_remedies(
-        loan_outstanding=loan_outstanding,
+        loan_outstanding=effective_debt,
         current_collateral_value=simulated_collateral_value,
         portfolio_beta=base_metrics.get("portfolio_beta", 1.0),
         maintenance_ltv=maintenance_ltv,
@@ -291,12 +334,26 @@ def simulate_market_shock(
 
     return {
         "market_drop_pct": round(market_drop_pct * 100.0, 2),
+        "days_unpaid_interest": days_unpaid_interest,
+        "accrued_interest": accrued_interest,
+        "effective_debt": effective_debt,
         "original_collateral_value": base_metrics["total_collateral_value"],
         "simulated_collateral_value": round(simulated_collateral_value, 2),
+        "simulated_eligible_value": round(simulated_eligible_value, 2),
+        "drawing_power_deficit": drawing_power_deficit,
         "total_wealth_lost": total_wealth_lost,
         "original_ltv_pct": base_metrics["current_ltv_pct"],
         "simulated_ltv": simulated_ltv,
         "simulated_ltv_pct": round(simulated_ltv * 100.0, 2),
+        "simulated_effective_ltv": simulated_effective_ltv,
+        "simulated_effective_ltv_pct": round(simulated_effective_ltv * 100.0, 2),
+        "rbi_50pct_shortfall": rbi_50pct_shortfall,
+        "rbi_milestone_code": rbi_milestone_code,
+        "rbi_milestone_tag_en": rbi_milestone_tag_en,
+        "rbi_milestone_tag_hi": rbi_milestone_tag_hi,
+        "rbi_cure_notice_en": rbi_cure_notice_en,
+        "rbi_cure_notice_hi": rbi_cure_notice_hi,
+        "rbi_cure_days": rbi_cure_days,
         "status_zone": zone,
         "severity_message": severity,
         "margin_call_breached": simulated_ltv >= maintenance_ltv,

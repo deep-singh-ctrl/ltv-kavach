@@ -136,6 +136,28 @@ def test_calm_mitigation_remedies():
     assert "calm_mitigation" in stress
     assert stress["calm_mitigation"]["exact_cash_inr"] > 0
 
+def test_real_life_ltv_nuances():
+    ramesh = INVESTOR_PERSONAS["persona_ramesh_high_risk"]
+    # 1. Test 60 days of unpaid interest creep
+    res_base = simulate_market_shock(ramesh["holdings"], ramesh["loan_outstanding"], market_drop_pct=0.0, days_unpaid_interest=0)
+    res_60d = simulate_market_shock(ramesh["holdings"], ramesh["loan_outstanding"], market_drop_pct=0.0, days_unpaid_interest=60)
+    
+    assert res_60d["accrued_interest"] > 6000.0
+    assert res_60d["effective_debt"] > res_base["effective_debt"]
+    assert res_60d["simulated_ltv_pct"] > res_base["simulated_ltv_pct"]
+
+    # 2. Test post-haircut eligible collateral (Drawing Power)
+    assert res_base["simulated_eligible_value"] < res_base["simulated_collateral_value"]
+    assert res_base["simulated_effective_ltv_pct"] > res_base["simulated_ltv_pct"]
+
+    # 3. Test RBI statutory 7-day cure window (when LTV between 50% and 65%)
+    # Priya moderate has LTV around 45%-50%
+    priya = INVESTOR_PERSONAS["persona_priya_moderate"]
+    res_priya = simulate_market_shock(priya["holdings"], priya["loan_outstanding"], market_drop_pct=-0.10)
+    if 50.0 < res_priya["simulated_ltv_pct"] <= 65.0:
+        assert res_priya["rbi_milestone_code"] == "STATUTORY_7_DAY_CURE"
+        assert res_priya["rbi_cure_days"] == 7
+
 if __name__ == "__main__":
     test_portfolio_metrics_ramesh_high_risk()
     test_portfolio_metrics_sunita_safe()
@@ -145,5 +167,6 @@ if __name__ == "__main__":
     test_vernacular_guidance_generation()
     test_sensitivity_and_swap_insight()
     test_calm_mitigation_remedies()
-    print("✅ All 8 Risk Engine, Sensitivity, & Calm Mitigation tests passed successfully!")
+    test_real_life_ltv_nuances()
+    print("✅ All 9 Risk Engine, Sensitivity, Calm Mitigation, & Real-Life LTV Nuance tests passed successfully!")
 

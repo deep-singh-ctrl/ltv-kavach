@@ -56,6 +56,7 @@ class StressTestRequest(BaseModel):
     market_drop_pct: float = -0.10
     maintenance_ltv: float = 0.65
     liquidation_ltv: float = 0.75
+    days_unpaid_interest: int = 0
 
 class SandboxRequest(BaseModel):
     portfolio_value: float
@@ -232,7 +233,8 @@ def stress_test(req: StressTestRequest):
         loan_outstanding=loan_amount,
         market_drop_pct=req.market_drop_pct,
         maintenance_ltv=req.maintenance_ltv,
-        liquidation_ltv=req.liquidation_ltv
+        liquidation_ltv=req.liquidation_ltv,
+        days_unpaid_interest=req.days_unpaid_interest
     )
 
     return result
