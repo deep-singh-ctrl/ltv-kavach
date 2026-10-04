@@ -203,6 +203,11 @@ def calculate_portfolio_metrics(
             "mod_beta_val": round(mod_beta_val, 2),
             "low_beta_val": round(low_beta_val, 2)
         },
+        "interest_metrics": {
+            "annual_rate_pct": 10.5,
+            "monthly_interest": round((loan_outstanding * 0.105) / 12, 2),
+            "annual_interest": round(loan_outstanding * 0.105, 2)
+        },
         "swap_insight": swap_insight,
         "holdings": enriched_holdings
     }
@@ -223,6 +228,12 @@ def simulate_market_shock(
     )
     if "error" in base_metrics:
         return base_metrics
+
+    # Normalize market_drop_pct if provided as percentage (e.g. -20.0 or 20.0) or positive ratio
+    if abs(market_drop_pct) > 1.0:
+        market_drop_pct = market_drop_pct / 100.0
+    if market_drop_pct > 0:
+        market_drop_pct = -market_drop_pct
 
     simulated_collateral_value = 0.0
     simulated_holdings = []
@@ -341,6 +352,8 @@ def calculate_buffer_remedies(
         "exact_tcs_shares": tcs_units,
         "exact_debt_units": debt_fund_units,
         "exact_collateral_val": round(additional_collateral_needed),
+        "monthly_interest_saved": round((cash_paydown_needed * 0.105) / 12),
+        "new_monthly_interest": round((max(0.0, loan_outstanding - cash_paydown_needed) * 0.105) / 12),
         "reassurance_en": "Stay Calm. You have clear, proven options. Lenders provide an advance notice window before taking any market action. Follow these 2 exact steps to immediately restore your safe margin:",
         "reassurance_hi": "घबराएं नहीं। आपके पास सुरक्षित और स्पष्ट विकल्प हैं। बैंक ज़बरन बिक्री से पहले सूचना देते हैं। अपने पोर्टफोलियो को सुरक्षित रखने के लिए ये २ आसान कदम उठाएं:",
         "step1_en": f"Option 1 (Cash): Pay exactly ₹{round(cash_paydown_needed):,} via UPI/IMPS directly to your loan account to restore your LTV to {safe_target_ltv*100}%.",

@@ -52,6 +52,32 @@
     input[type=range] {
       accent-color: #059669;
     }
+    @media print {
+      body {
+        background: #ffffff !important;
+        color: #0f172a !important;
+      }
+      aside, header, #marketDropSlider, .no-print, button, #alertModal, #customModal, #modalGuide, #quickTooltipPopover {
+        display: none !important;
+      }
+      main {
+        overflow: visible !important;
+        display: block !important;
+        width: 100% !important;
+        padding: 0 !important;
+        margin: 0 !important;
+      }
+      .view-panel {
+        display: block !important;
+        margin-bottom: 24px !important;
+      }
+      #printCertificateHeader {
+        display: block !important;
+      }
+      .shadow-sm, .shadow-md, .shadow-lg, .shadow-xl, .shadow-2xs, .shadow-inner {
+        box-shadow: none !important;
+      }
+    }
   </style>
 </head>
 <body class="bg-surface-50 text-slate-800 min-h-screen flex flex-col md:flex-row antialiased selection:bg-emerald-100 selection:text-emerald-900">
@@ -151,16 +177,41 @@
         </h1>
       </div>
 
-      <!-- Step Breadcrumb -->
-      <div class="flex items-center space-x-1.5 text-xs font-bold text-slate-500 bg-surface-50 border border-slate-200/80 rounded-xl p-1.5 px-3">
-        <span class="text-emerald-700 font-extrabold" id="crumb_1">1. Health & Sensitivity</span>
-        <span>→</span>
-        <span class="text-slate-400" id="crumb_2">2. Crash Simulator</span>
+      <!-- Header Actions: Guide, Print, & Step Breadcrumb -->
+      <div class="flex flex-wrap items-center gap-2">
+        <button onclick="openInvestorGuideModal()" class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-200/90 text-xs font-bold transition shadow-2xs cursor-pointer">
+          <i data-lucide="graduation-cap" class="w-4 h-4 text-amber-600"></i>
+          <span id="btnGuideText">Investor Guide</span>
+        </button>
+        <button onclick="printResilienceReport()" class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 text-xs font-bold transition shadow-2xs cursor-pointer">
+          <i data-lucide="printer" class="w-4 h-4 text-slate-600"></i>
+          <span id="btnPrintText">Print / PDF</span>
+        </button>
+        <div class="flex items-center space-x-1.5 text-xs font-bold text-slate-500 bg-surface-50 border border-slate-200/80 rounded-xl p-1.5 px-3">
+          <span class="text-emerald-700 font-extrabold" id="crumb_1">1. Health & Sensitivity</span>
+          <span>→</span>
+          <span class="text-slate-400" id="crumb_2">2. Crash Simulator</span>
+        </div>
       </div>
     </header>
 
     <!-- CONTENT BODY -->
     <div class="p-6 md:p-10 max-w-4xl w-full mx-auto space-y-6 flex-1">
+
+      <!-- PRINTABLE RESILIENCE CERTIFICATE HEADER (Visible ONLY during print/PDF export) -->
+      <div id="printCertificateHeader" class="hidden border-b-2 border-slate-900 pb-4 mb-6">
+        <div class="flex justify-between items-start">
+          <div>
+            <div class="text-xs font-black uppercase tracking-wider text-emerald-800">SEBI • NSDL SANGYAN 2026 INVESTOR RESILIENCE GUARDIAN</div>
+            <h1 class="text-2xl font-black text-slate-900 mt-1">LTV-KAVACH PORTFOLIO RESILIENCE CERTIFICATE</h1>
+            <p class="text-xs text-slate-600 mt-0.5" id="printBorrowerDetails">Borrower: Ramesh Gupta | Loan ID: LK-2026-8941</p>
+          </div>
+          <div class="text-right">
+            <span class="inline-block px-3 py-1 rounded-full text-xs font-black bg-slate-900 text-white" id="printDateStamp">OCTOBER 2026</span>
+            <div class="text-[10px] text-slate-500 mt-1">Regulated Under RBI & SEBI LAS Framework</div>
+          </div>
+        </div>
+      </div>
 
       <!-- VERNACULAR SUMMARY BANNER -->
       <div id="vernacularBox" class="bg-emerald-50/70 border border-emerald-200/90 rounded-2xl p-4 flex items-center justify-between gap-4 shadow-xs">
@@ -209,7 +260,12 @@
               <!-- Metric Header -->
               <div class="flex items-center justify-between">
                 <div>
-                  <span id="ltvRatioLabel" class="text-xs uppercase tracking-wider font-bold text-slate-400">Current LTV Ratio</span>
+                  <div class="flex items-center gap-1.5">
+                    <span id="ltvRatioLabel" class="text-xs uppercase tracking-wider font-bold text-slate-400">Current LTV Ratio</span>
+                    <button type="button" onclick="showQuickTooltip('ltv', event)" class="text-slate-400 hover:text-emerald-700 transition cursor-pointer" title="What is LTV?">
+                      <i data-lucide="help-circle" class="w-3.5 h-3.5"></i>
+                    </button>
+                  </div>
                   <div class="flex items-baseline gap-2 mt-0.5">
                     <span id="healthLtvNumber" class="text-4xl font-black tracking-tight text-slate-900">0.0%</span>
                     <span id="healthLtvStatus" class="text-xs font-bold text-slate-500">of collateral borrowed</span>
@@ -285,9 +341,14 @@
               
               <!-- Distance Card (Key Takeaway) -->
               <div class="p-5 rounded-2xl bg-surface-50 border border-slate-200/80">
-                <span class="text-xs font-bold uppercase tracking-wider text-slate-500" id="bufferCardTitle">
-                  Buffer Before Bank Warning
-                </span>
+                <div class="flex items-center justify-between">
+                  <span class="text-xs font-bold uppercase tracking-wider text-slate-500" id="bufferCardTitle">
+                    Buffer Before Bank Warning
+                  </span>
+                  <button type="button" onclick="showQuickTooltip('buffer', event)" class="text-slate-400 hover:text-emerald-700 transition cursor-pointer" title="What is Buffer?">
+                    <i data-lucide="help-circle" class="w-3.5 h-3.5"></i>
+                  </button>
+                </div>
                 <div class="text-2xl font-black text-slate-900 mt-1" id="healthDropText">
                   Calculating...
                 </div>
@@ -305,6 +366,15 @@
                 <div class="flex justify-between">
                   <span class="text-slate-500" id="loanBorrowedLabel">Loan Borrowed:</span>
                   <b id="healthLoanVal" class="text-slate-900 font-bold">₹0</b>
+                </div>
+                <div class="flex justify-between pt-1 border-t border-slate-100">
+                  <span class="text-slate-500 flex items-center gap-1">
+                    <span id="interestBurdenLabel">Est. Monthly Interest:</span>
+                    <button type="button" onclick="showQuickTooltip('interest', event)" class="text-slate-400 hover:text-emerald-700 transition cursor-pointer" title="Interest Details">
+                      <i data-lucide="help-circle" class="w-3 h-3"></i>
+                    </button>
+                  </span>
+                  <b id="healthInterestVal" class="text-slate-900 font-bold">₹0 / mo</b>
                 </div>
                 <div class="flex justify-between pt-1 border-t border-slate-100">
                   <span class="text-slate-500" id="riskAssessmentLabel">Risk Assessment:</span>
@@ -337,10 +407,18 @@
                   </div>
                   <div class="text-base font-black text-slate-900 mt-1" id="step1CashVal">₹0</div>
                   <p class="text-[11px] text-slate-600 mt-0.5" id="step1CashSub">Pay via UPI to restore 45% safe LTV</p>
+                  <span id="step1InterestSavings" class="inline-block mt-1.5 text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200">
+                    Saves ₹0/mo in interest
+                  </span>
                 </div>
                 <div class="p-3.5 bg-white rounded-2xl border border-emerald-200 shadow-2xs">
                   <div class="flex items-center justify-between">
-                    <span class="text-[10px] font-bold uppercase tracking-wider text-emerald-800" id="step1Opt2Title">Option 2: Zero-Cash Pledge</span>
+                    <span class="text-[10px] font-bold uppercase tracking-wider text-emerald-800 flex items-center gap-1" id="step1Opt2Title">
+                      <span>Option 2: Zero-Cash Pledge</span>
+                      <button type="button" onclick="showQuickTooltip('zero_cash', event)" class="text-slate-400 hover:text-teal-700 cursor-pointer" title="Zero-Cash Details">
+                        <i data-lucide="help-circle" class="w-3 h-3"></i>
+                      </button>
+                    </span>
                     <span class="text-[9px] font-extrabold px-1.5 py-0.5 rounded-full bg-teal-50 text-teal-700 border border-teal-200" id="step1PledgeTag">NSDL OTP</span>
                   </div>
                   <div class="text-base font-black text-slate-900 mt-1" id="step1SharesVal">0 Reliance Shares</div>
@@ -363,8 +441,13 @@
                 <p class="text-[11px] text-slate-500 font-medium" id="sensitivityCardSub">How sharply your pledged portfolio swings compared to Nifty 50.</p>
               </div>
             </div>
-            <div id="portfolioBetaBadge" class="self-start sm:self-auto text-xs font-extrabold px-3 py-1 rounded-full bg-slate-100 text-slate-800 border border-slate-200">
-              Portfolio Beta: 1.00
+            <div class="flex items-center gap-2">
+              <div id="portfolioBetaBadge" class="self-start sm:self-auto text-xs font-extrabold px-3 py-1 rounded-full bg-slate-100 text-slate-800 border border-slate-200">
+                Portfolio Beta: 1.00
+              </div>
+              <button type="button" onclick="showQuickTooltip('beta', event)" class="text-slate-400 hover:text-emerald-700 transition cursor-pointer" title="What is Beta?">
+                <i data-lucide="help-circle" class="w-3.5 h-3.5"></i>
+              </button>
             </div>
           </div>
 
@@ -542,9 +625,14 @@
                 <i data-lucide="pie-chart" class="w-3.5 h-3.5 text-emerald-600"></i>
                 Collateral Allocation & Concentration:
               </span>
-              <span id="hhiBadge" class="self-start sm:self-auto text-[10px] font-extrabold px-2.5 py-0.5 rounded-full bg-slate-200 text-slate-800 border border-slate-300">
-                HHI: 0 (Analyzing...)
-              </span>
+              <div class="flex items-center gap-1.5">
+                <span id="hhiBadge" class="self-start sm:self-auto text-[10px] font-extrabold px-2.5 py-0.5 rounded-full bg-slate-200 text-slate-800 border border-slate-300">
+                  HHI: 0 (Analyzing...)
+                </span>
+                <button type="button" onclick="showQuickTooltip('hhi', event)" class="text-slate-400 hover:text-emerald-700 transition cursor-pointer" title="What is HHI?">
+                  <i data-lucide="help-circle" class="w-3.5 h-3.5"></i>
+                </button>
+              </div>
             </div>
 
             <!-- Proportional Multi-Segment Allocation Track -->
@@ -566,7 +654,14 @@
                   <th class="py-2.5 px-3" id="thCategory">Category</th>
                   <th class="py-2.5 px-3" id="thUnits">Units</th>
                   <th class="py-2.5 px-3" id="thValue">Market Value</th>
-                  <th class="py-2.5 px-3" id="thSensitivity">Market Sensitivity</th>
+                  <th class="py-2.5 px-3">
+                    <span class="inline-flex items-center gap-1" id="thSensitivity">
+                      Market Sensitivity
+                    </span>
+                    <button type="button" onclick="showQuickTooltip('haircut', event)" class="text-slate-400 hover:text-slate-700 ml-1 inline cursor-pointer" title="Haircut & Beta">
+                      <i data-lucide="help-circle" class="w-3 h-3 inline"></i>
+                    </button>
+                  </th>
                 </tr>
               </thead>
               <tbody id="holdingsTableBody" class="divide-y divide-slate-100">
@@ -680,10 +775,18 @@
                     </div>
                     <div class="text-base font-black text-slate-900 mt-1" id="stressStep1Val">₹0</div>
                     <p class="text-[11px] text-slate-600 mt-0.5" id="stressStep1Desc">Pay via UPI/IMPS to restore safe 45% LTV</p>
+                    <span id="stressInterestSavings" class="inline-block mt-1.5 text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200">
+                      Saves ₹0/mo in interest
+                    </span>
                   </div>
                   <div class="p-3.5 bg-white rounded-2xl border border-emerald-200 shadow-2xs">
                     <div class="flex items-center justify-between">
-                      <span class="text-[10px] font-bold uppercase tracking-wider text-emerald-800" id="stressStep2Title">Option 2: Zero-Cash Pledge</span>
+                      <span class="text-[10px] font-bold uppercase tracking-wider text-emerald-800 flex items-center gap-1" id="stressStep2Title">
+                        <span>Option 2: Zero-Cash Pledge</span>
+                        <button type="button" onclick="showQuickTooltip('zero_cash', event)" class="text-slate-400 hover:text-teal-700 cursor-pointer" title="Zero-Cash Details">
+                          <i data-lucide="help-circle" class="w-3 h-3"></i>
+                        </button>
+                      </span>
                       <span class="text-[9px] font-extrabold px-1.5 py-0.5 rounded-full bg-teal-50 text-teal-700 border border-teal-200" id="stressPledgeTag">NSDL OTP</span>
                     </div>
                     <div class="text-base font-black text-slate-900 mt-1" id="stressStep2Val">0 Reliance Shares</div>
@@ -734,9 +837,12 @@
           <div class="p-6 rounded-3xl bg-white border border-slate-200/80 shadow-2xs space-y-4 mt-4">
             <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-1 border-b border-slate-100 pb-3">
               <div>
-                <h3 class="text-sm font-bold text-slate-900 flex items-center gap-2" id="lblPerStockCrashTitle">
+                <h3 class="text-sm font-bold text-slate-900 flex items-center gap-2">
                   <i data-lucide="trending-down" class="w-4 h-4 text-rose-600"></i>
-                  Per-Stock Crash Impact (Beta-Weighted)
+                  <span id="lblPerStockCrashTitle">Per-Stock Crash Impact (Beta-Weighted)</span>
+                  <button type="button" onclick="showQuickTooltip('per_stock', event)" class="text-slate-400 hover:text-rose-700 cursor-pointer" title="Beta-Weighted Drops">
+                    <i data-lucide="help-circle" class="w-3.5 h-3.5"></i>
+                  </button>
                 </h3>
                 <p class="text-[11px] text-slate-500 font-medium" id="lblPerStockCrashSub">Individual asset losses under this market drop.</p>
               </div>
@@ -902,6 +1008,140 @@
     </div>
   </div>
 
+  <!-- FIRST-TIME BORROWER GUIDE MODAL (SEBI/RBI AWARENESS) -->
+  <div id="modalGuide" class="fixed inset-0 bg-slate-900/50 backdrop-blur-xs z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white border border-slate-200 rounded-3xl max-w-2xl w-full p-6 sm:p-8 shadow-2xl space-y-5 max-h-[90vh] overflow-y-auto">
+      
+      <!-- Modal Header -->
+      <div class="flex items-center justify-between border-b border-slate-100 pb-4">
+        <div class="flex items-center space-x-3">
+          <div class="w-10 h-10 rounded-2xl bg-amber-50 border border-amber-200 flex items-center justify-center text-amber-700 flex-shrink-0 shadow-2xs">
+            <i data-lucide="graduation-cap" class="w-5 h-5"></i>
+          </div>
+          <div>
+            <h3 class="text-base font-bold text-slate-900" id="modalGuideTitle">
+              First-Time Borrower Guide: Loan Against Shares
+            </h3>
+            <p class="text-xs text-slate-500 mt-0.5" id="modalGuideSub">
+              Master the 4 golden rules of safe borrowing, legal rights & zero-cash protection under SEBI/RBI rules.
+            </p>
+          </div>
+        </div>
+        <button onclick="closeInvestorGuideModal()" class="text-slate-400 hover:text-slate-600 cursor-pointer">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <!-- Guide Tab Pills -->
+      <div class="flex flex-wrap gap-1 p-1 bg-surface-100 rounded-xl border border-slate-200 text-xs font-bold">
+        <button id="btnTabGuideLtv" onclick="switchGuideTab('ltv')" class="flex-1 py-1.5 px-2 rounded-lg bg-white text-slate-900 shadow-xs cursor-pointer">
+          <span id="tabGuideLtv">1. LTV Mechanics</span>
+        </button>
+        <button id="btnTabGuideRights" onclick="switchGuideTab('rights')" class="flex-1 py-1.5 px-2 rounded-lg text-slate-600 hover:text-slate-900 cursor-pointer">
+          <span id="tabGuideRights">2. Legal Rights</span>
+        </button>
+        <button id="btnTabGuideBeta" onclick="switchGuideTab('beta')" class="flex-1 py-1.5 px-2 rounded-lg text-slate-600 hover:text-slate-900 cursor-pointer">
+          <span id="tabGuideBeta">3. Beta & Crashes</span>
+        </button>
+        <button id="btnTabGuidePledge" onclick="switchGuideTab('pledge')" class="flex-1 py-1.5 px-2 rounded-lg text-slate-600 hover:text-slate-900 cursor-pointer">
+          <span id="tabGuidePledge">4. Zero-Cash Rescue</span>
+        </button>
+      </div>
+
+      <!-- Tab Content 1: LTV Mechanics -->
+      <div id="guideSectionLtv" class="space-y-3.5 text-xs text-slate-700">
+        <div class="p-4 rounded-2xl bg-emerald-50/70 border border-emerald-200/90 space-y-2">
+          <div class="font-black text-emerald-950 text-sm flex items-center gap-1.5">
+            <i data-lucide="calculator" class="w-4 h-4 text-emerald-700"></i>
+            <span id="guideLtvEqTitle">The LTV Formula: Why Ratio Climbs When Prices Fall</span>
+          </div>
+          <p class="leading-relaxed" id="guideLtvEqBody">
+            LTV = (Bank Loan ÷ Current Collateral Value) × 100. When share prices fall in the market, your loan debt stays unchanged, but the collateral denominator shrinks—pushing your percentage rapidly closer to the margin warning line!
+          </p>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5 pt-1 text-center">
+          <div class="p-3 bg-surface-50 rounded-xl border border-slate-200">
+            <span class="text-[10px] font-black uppercase text-emerald-700 block" id="guideZoneSafeTag">Safe Green (&lt;50%)</span>
+            <p class="text-[11px] text-slate-600 mt-1" id="guideZoneSafeDesc">RBI recommended cap. Withstands routine 20% market swings comfortably.</p>
+          </div>
+          <div class="p-3 bg-surface-50 rounded-xl border border-slate-200">
+            <span class="text-[10px] font-black uppercase text-amber-700 block" id="guideZoneWarnTag">Warning (50%-65%)</span>
+            <p class="text-[11px] text-slate-600 mt-1" id="guideZoneWarnDesc">Buffer shrinks. Start reviewing portfolio beta or prepare zero-cash pledge.</p>
+          </div>
+          <div class="p-3 bg-surface-50 rounded-xl border border-slate-200">
+            <span class="text-[10px] font-black uppercase text-rose-700 block" id="guideZoneCritTag">Margin Call (&gt;65%)</span>
+            <p class="text-[11px] text-slate-600 mt-1" id="guideZoneCritDesc">Lender triggers formal notice. You have a legal cure window to restore margin.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab Content 2: Your Legal Rights -->
+      <div id="guideSectionRights" class="space-y-3.5 text-xs text-slate-700 hidden">
+        <div class="p-4 rounded-2xl bg-amber-50/70 border border-amber-200/90 space-y-2">
+          <div class="font-black text-amber-950 text-sm flex items-center gap-1.5">
+            <i data-lucide="scale" class="w-4 h-4 text-amber-700"></i>
+            <span id="guideRightsTitle">Your Rights Under SEBI & RBI LAS Regulations</span>
+          </div>
+          <ul class="space-y-2 text-[11px] leading-relaxed list-disc list-inside">
+            <li id="guideRight1"><b class="text-slate-900">Shares Stay in YOUR Demat:</b> Under SEBI Margin Pledge rules, shares are marked with a lien but remain in your account. You continue earning 100% of dividends and bonuses!</li>
+            <li id="guideRight2"><b class="text-slate-900">Mandatory Notice Windows:</b> RBI rules for Loan Against Shares give retail borrowers an advance cure window (typically up to 7 working days) to restore margins before any liquidation.</li>
+            <li id="guideRight3"><b class="text-slate-900">No Secret Forced Sales:</b> Banks cannot silently sell shares without issuing a formal margin call alert first via SMS and email.</li>
+            <li id="guideRight4"><b class="text-slate-900">Right to Cure via Collateral:</b> You are NOT forced to pay cash. You always have the right to pledge additional unpledged securities.</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Tab Content 3: Beta & Volatility 101 -->
+      <div id="guideSectionBeta" class="space-y-3.5 text-xs text-slate-700 hidden">
+        <div class="p-4 rounded-2xl bg-indigo-50/70 border border-indigo-200/90 space-y-2">
+          <div class="font-black text-indigo-950 text-sm flex items-center gap-1.5">
+            <i data-lucide="trending-up" class="w-4 h-4 text-indigo-700"></i>
+            <span id="guideBetaTitle">Beta: Why High-Beta Stocks Threaten Your Loan</span>
+          </div>
+          <p class="leading-relaxed" id="guideBetaBody">
+            Beta measures volatility compared to Nifty 50 (Beta = 1.0). High-beta smallcaps (Beta &gt; 1.5) plunge 1.5x to 2.5x faster than the index during a correction. Pledging only smallcaps creates fragile collateral. Swapping even a single high-beta stock for a Nifty 50 bluechip or debt fund dramatically widens your safety cushion!
+          </p>
+        </div>
+      </div>
+
+      <!-- Tab Content 4: Zero-Cash Rescue Playbook -->
+      <div id="guideSectionPledge" class="space-y-3.5 text-xs text-slate-700 hidden">
+        <div class="p-4 rounded-2xl bg-teal-50/70 border border-teal-200/90 space-y-2">
+          <div class="font-black text-teal-950 text-sm flex items-center gap-1.5">
+            <i data-lucide="shield-alert" class="w-4 h-4 text-teal-700"></i>
+            <span id="guidePledgeTitle">The Zero-Cash Rescue Playbook (NSDL Demat OTP)</span>
+          </div>
+          <p class="leading-relaxed text-[11px]" id="guidePledgeBody">
+            Never take emergency high-interest payday loans or panic-borrow cash from friends to meet a margin call! You can pledge unpledged shares or Debt Mutual Funds in 4 simple steps:
+          </p>
+          <ol class="space-y-1.5 text-[11px] list-decimal list-inside font-medium pt-1">
+            <li id="guideStep1">Log in to your broker app or official NSDL portal (eservices.nsdl.com).</li>
+            <li id="guideStep2">Select spare bluechips, ETFs, or liquid fund units from your demat holdings.</li>
+            <li id="guideStep3">Enter the official OTP sent by NSDL to your registered mobile number.</li>
+            <li id="guideStep4">Your LTV restores to the safe green zone instantly with ₹0 cash spent!</li>
+          </ol>
+        </div>
+      </div>
+
+      <!-- Actions -->
+      <div class="flex justify-end pt-3 border-t border-slate-100">
+        <button onclick="closeInvestorGuideModal()" class="px-5 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold transition cursor-pointer" id="btnCloseGuide">
+          Close Guide
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- FLOATING QUICK TOOLTIP POPOVER (Interactive click/hover definition) -->
+  <div id="quickTooltipPopover" class="fixed z-50 hidden bg-slate-900 text-white text-xs rounded-2xl p-4 shadow-2xl max-w-xs border border-slate-700 leading-relaxed pointer-events-auto">
+    <div class="flex items-center justify-between border-b border-slate-800 pb-1.5 mb-1.5 font-bold text-emerald-400">
+      <span id="tooltipTitle">Definition</span>
+      <button onclick="closeQuickTooltip()" class="text-slate-400 hover:text-white ml-2 text-sm cursor-pointer">✕</button>
+    </div>
+    <p id="tooltipBody" class="text-slate-300 text-[11px] leading-relaxed"></p>
+  </div>
+
   <!-- JAVASCRIPT APPLICATION LOGIC -->
   <script>
     let currentPersonaId = 'persona_ramesh_high_risk';
@@ -1038,7 +1278,39 @@
         stressStep1Desc: "Pay via UPI/IMPS to restore safe 45% LTV",
         stressStep2Title: "Option 2: Zero-Cash Pledge",
         stressPledgeTag: "NSDL OTP",
-        stressStep2Desc: "Pledge via instant Demat OTP without cash"
+        stressStep2Desc: "Pledge via instant Demat OTP without cash",
+        btnGuideText: "Investor Guide",
+        btnPrintText: "Print / PDF",
+        interestBurdenLabel: "Est. Monthly Interest:",
+        modalGuideTitle: "First-Time Borrower Guide: Loan Against Shares",
+        modalGuideSub: "Master the 4 golden rules of safe borrowing, legal rights & zero-cash protection under SEBI/RBI rules.",
+        tabGuideLtv: "1. LTV Mechanics",
+        tabGuideRights: "2. Legal Rights",
+        tabGuideBeta: "3. Beta & Crashes",
+        tabGuidePledge: "4. Zero-Cash Rescue",
+        btnCloseGuide: "Close Guide",
+        // First-Time Investor Guide Modal Content
+        guideLtvEqTitle: "The LTV Formula: Why Ratio Climbs When Prices Fall",
+        guideLtvEqBody: "LTV = (Bank Loan ÷ Current Collateral Value) × 100. When share prices fall in the market, your loan debt stays unchanged, but the collateral denominator shrinks—pushing your percentage rapidly closer to the margin warning line!",
+        guideZoneSafeTag: "Safe Green (<50%)",
+        guideZoneSafeDesc: "RBI recommended cap. Withstands routine 20% market swings comfortably.",
+        guideZoneWarnTag: "Warning (50%-65%)",
+        guideZoneWarnDesc: "Buffer shrinks. Start reviewing portfolio beta or prepare zero-cash pledge.",
+        guideZoneCritTag: "Margin Call (>65%)",
+        guideZoneCritDesc: "Lender triggers formal notice. You have a legal cure window to restore margin.",
+        guideRightsTitle: "Your Rights Under SEBI & RBI LAS Regulations",
+        guideRight1: "<b class=\"text-slate-900\">Shares Stay in YOUR Demat:</b> Under SEBI Margin Pledge rules, shares are marked with a lien but remain in your account. You continue earning 100% of dividends and bonuses!",
+        guideRight2: "<b class=\"text-slate-900\">Mandatory Notice Windows:</b> RBI rules for Loan Against Shares give retail borrowers an advance cure window (typically up to 7 working days) to restore margins before any liquidation.",
+        guideRight3: "<b class=\"text-slate-900\">No Secret Forced Sales:</b> Banks cannot silently sell shares without issuing a formal margin call alert first via SMS and email.",
+        guideRight4: "<b class=\"text-slate-900\">Right to Cure via Collateral:</b> You are NOT forced to pay cash. You always have the right to pledge additional unpledged securities.",
+        guideBetaTitle: "Beta: Why High-Beta Stocks Threaten Your Loan",
+        guideBetaBody: "Beta measures volatility compared to Nifty 50 (Beta = 1.0). High-beta smallcaps (Beta > 1.5) plunge 1.5x to 2.5x faster than the index during a correction. Pledging only smallcaps creates fragile collateral. Swapping even a single high-beta stock for a Nifty 50 bluechip or debt fund dramatically widens your safety cushion!",
+        guidePledgeTitle: "The Zero-Cash Rescue Playbook (NSDL Demat OTP)",
+        guidePledgeBody: "Never take emergency high-interest payday loans or panic-borrow cash from friends to meet a margin call! You can pledge unpledged shares or Debt Mutual Funds in 4 simple steps:",
+        guideStep1: "Log in to your broker app or official NSDL portal (eservices.nsdl.com).",
+        guideStep2: "Select spare bluechips, ETFs, or liquid fund units from your demat holdings.",
+        guideStep3: "Enter the official OTP sent by NSDL to your registered mobile number.",
+        guideStep4: "Your LTV restores to the safe green zone instantly with ₹0 cash spent!"
       },
       hi: {
         brandTag: "एलटीवी कवच",
@@ -1164,7 +1436,39 @@
         stressStep1Desc: "सुरक्षित ४५% एलटीवी के लिए यूपीआई/आईएमपीएस से भुगतान करें",
         stressStep2Title: "विकल्प २: बिना नकद शेयर गिरवी",
         stressPledgeTag: "एनएसडीएल ओटीपी",
-        stressStep2Desc: "बिना नकद त्वरित डीमैट ओटीपी द्वारा गिरवी रखें"
+        stressStep2Desc: "बिना नकद त्वरित डीमैट ओटीपी द्वारा गिरवी रखें",
+        btnGuideText: "निवेशक गाइड",
+        btnPrintText: "प्रिंट / पीडीएफ",
+        interestBurdenLabel: "अनुमानित मासिक ब्याज:",
+        modalGuideTitle: "ऋणधारक मार्गदर्शिका: शेयरों पर लोन",
+        modalGuideSub: "सेबी व आरबीआई नियमों के तहत सुरक्षित लोन, कानूनी अधिकार और बिना नकद सुरक्षा के ४ नियम।",
+        tabGuideLtv: "१. एलटीवी का गणित",
+        tabGuideRights: "२. आपके कानूनी अधिकार",
+        tabGuideBeta: "३. बीटा और संवेदनशीलता",
+        tabGuidePledge: "४. बिना नकद डीमैट सुरक्षा",
+        btnCloseGuide: "गाइड बंद करें",
+        // First-Time Investor Guide Modal Content
+        guideLtvEqTitle: "एलटीवी सूत्र: बाज़ार गिरने पर अनुपात क्यों बढ़ता है?",
+        guideLtvEqBody: "एलटीवी = (लिया गया लोन ÷ गिरवी शेयरों का बाज़ार मूल्य) × १००। बाज़ार में शेयरों के भाव गिरने पर आपका लोन नहीं बदलता, लेकिन नीचे का कुल मूल्य घट जाता है—जिससे आपका एलटीवी प्रतिशत तेज़ी से चेतावनी रेखा के करीब पहुँच जाता है!",
+        guideZoneSafeTag: "सुरक्षित हरा (<५०%)",
+        guideZoneSafeDesc: "आरबीआई की अनुशंसित सीमा। बाज़ार के सामान्य २०% उतार-चढ़ाव को आसानी से झेल सकता है।",
+        guideZoneWarnTag: "चेतावनी (५०%-६५%)",
+        guideZoneWarnDesc: "सुरक्षा कुशन घट जाता है। अपने पोर्टफोलियो की संवेदनशीलता जांचें या अतिरिक्त शेयर गिरवी रखने की तैयारी रखें।",
+        guideZoneCritTag: "मार्जिन कॉल (>६५%)",
+        guideZoneCritDesc: "बैंक औपचारिक नोटिस जारी करता है। आपको सुरक्षा सीमा बहाल करने के लिए कानूनी समय अवधि मिलती है।",
+        guideRightsTitle: "सेबी व आरबीआई नियमों के तहत आपके कानूनी अधिकार",
+        guideRight1: "<b class=\"text-slate-900\">शेयर आपके ही डीमैट खाते में रहते हैं:</b> सेबी मार्जिन प्लेज नियमों के अनुसार शेयर केवल लियन-मार्क होते हैं। आपको १००% लाभांश (डिविडेंड) और बोनस शेयर मिलते रहते हैं!",
+        guideRight2: "<b class=\"text-slate-900\">अनिवार्य अग्रिम सूचना अवधि:</b> आरबीआई नियमों के तहत शेयरों पर लोन लेने वाले ग्राहकों को किसी भी बिक्री से पहले मार्जिन बहाल करने के लिए अग्रिम समय (आमतौर पर ७ कार्यदिवस तक) मिलता है।",
+        guideRight3: "<b class=\"text-slate-900\">बिना सूचना ज़बरन बिक्री नहीं:</b> बैंक पंजीकृत मोबाइल व ईमेल पर औपचारिक मार्जिन कॉल भेजे बिना गुपचुप आपके शेयर नहीं बेच सकते।",
+        guideRight4: "<b class=\"text-slate-900\">शेयरों द्वारा मार्जिन बहाली का अधिकार:</b> आपको केवल नकद चुकाने की बाध्यता नहीं है। आप अतिरिक्त डीमैट शेयर या म्यूचुअल फंड गिरवी रखकर मार्जिन पूरा कर सकते हैं।",
+        guideBetaTitle: "बीटा: उच्च-बीटा शेयर आपके लोन के लिए जोखिम क्यों हैं?",
+        guideBetaBody: "बीटा निफ्टी ५० (बीटा = १.०) की तुलना में शेयर की अस्थिरता को मापता है। उच्च-बीटा स्मॉलकैप शेयर (बीटा > १.५) बाज़ार गिरने पर १.५ से २.५ गुना तेज़ी से गिरते हैं। केवल स्मॉलकैप गिरवी रखने से आपका लोन कमज़ोर हो जाता है। एक उच्च-बीटा शेयर के बदले निफ्टी ५० लार्जकैप या डेट फंड रखने से सुरक्षा कुशन तुरंत बढ़ जाता है!",
+        guidePledgeTitle: "बिना नकद बचाव कार्ययोजना (एनएसडीएल डीमैट ओटीपी)",
+        guidePledgeBody: "मार्जिन कॉल आने पर कभी भी घबराकर भारी ब्याज पर पर्सनल लोन न लें और न ही दोस्तों से नकद मांगें! आप ४ आसान चरणों में अतिरिक्त शेयर या म्यूचुअल फंड गिरवी रख सकते हैं:",
+        guideStep1: "अपने ब्रोकर ऐप या आधिकारिक एनएसडीएल पोर्टल (eservices.nsdl.com) में लॉग इन करें।",
+        guideStep2: "अपने डीमैट खाते से अतिरिक्त लार्जकैप शेयर, ईटीएफ या लिक्विड फंड यूनिट चुनें।",
+        guideStep3: "एनएसडीएल द्वारा आपके पंजीकृत मोबाइल पर भेजा गया आधिकारिक ओटीपी दर्ज करें।",
+        guideStep4: "बिना एक भी रुपया नकद खर्च किए आपका एलटीवी तुरंत सुरक्षित हरे क्षेत्र में आ जाता है!"
       }
     };
 
@@ -1250,7 +1554,11 @@
       for (const [key, val] of Object.entries(t)) {
         const el = document.getElementById(key);
         if (el) {
-          el.innerText = val;
+          if (typeof val === 'string' && val.includes('<')) {
+            el.innerHTML = val;
+          } else {
+            el.innerText = val;
+          }
         }
       }
 
@@ -1479,6 +1787,25 @@
 
       document.getElementById('healthCollateralVal').innerText = `₹${Math.round(m.total_collateral_value).toLocaleString('en-IN')}`;
       document.getElementById('healthLoanVal').innerText = `₹${Math.round(m.loan_outstanding).toLocaleString('en-IN')}`;
+
+      // Estimated Monthly Interest Burden
+      const monthlyInt = Math.round((m.loan_outstanding * 0.105) / 12);
+      const intEl = document.getElementById('healthInterestVal');
+      if (intEl) {
+        intEl.innerText = `₹${monthlyInt.toLocaleString('en-IN')} / ${currentLang === 'hi' ? 'माह (१०.५% दर)' : 'mo (10.5% p.a.)'}`;
+      }
+
+      // Print Certificate details
+      const printDetails = document.getElementById('printBorrowerDetails');
+      if (printDetails && data.persona) {
+        const rawName = data.persona.borrower_name || data.persona.name || 'Investor';
+        printDetails.innerText = `${currentLang === 'hi' ? 'ऋणधारक' : 'Borrower'}: ${rawName} | ${currentLang === 'hi' ? 'लोन' : 'Loan'}: ₹${Math.round(m.loan_outstanding).toLocaleString('en-IN')} | LTV: ${m.current_ltv_pct}%`;
+      }
+      const printDate = document.getElementById('printDateStamp');
+      if (printDate) {
+        const now = new Date();
+        printDate.innerText = now.toLocaleDateString(currentLang === 'hi' ? 'hi-IN' : 'en-IN', { year: 'numeric', month: 'long', day: 'numeric' });
+      }
       
       const gradeMap = {
         'LOW': currentLang === 'hi' ? 'कम जोखिम' : 'LOW RISK',
@@ -1502,6 +1829,14 @@
         document.getElementById('step1SharesVal').innerText = currentLang === 'hi' 
           ? `${relShares} रिलायंस शेयर` 
           : `${relShares} Reliance Shares`;
+
+        const intSaved = cm.monthly_interest_saved || Math.round((exactCash * 0.105) / 12);
+        const intSaveEl = document.getElementById('step1InterestSavings');
+        if (intSaveEl) {
+          intSaveEl.innerText = currentLang === 'hi' 
+            ? `मासिक ब्याज में ₹${intSaved.toLocaleString('en-IN')} की स्थायी बचत` 
+            : `Saves ₹${intSaved.toLocaleString('en-IN')}/mo in interest`;
+        }
       } else {
         if (calmBox) calmBox.classList.add('hidden');
       }
@@ -1772,6 +2107,13 @@
             document.getElementById('stressStep2Val').innerText = currentLang === 'hi'
               ? `${sim.calm_mitigation.exact_reliance_shares} रिलायंस शेयर`
               : `${sim.calm_mitigation.exact_reliance_shares} Reliance Shares`;
+            const stressIntSaveEl = document.getElementById('stressInterestSavings');
+            if (stressIntSaveEl) {
+              const sIntSaved = sim.calm_mitigation.monthly_interest_saved || Math.round((sim.calm_mitigation.exact_cash_inr * 0.105) / 12);
+              stressIntSaveEl.innerText = currentLang === 'hi'
+                ? `मासिक ब्याज में ₹${sIntSaved.toLocaleString('en-IN')} की स्थायी बचत`
+                : `Saves ₹${sIntSaved.toLocaleString('en-IN')}/mo in interest`;
+            }
           }
         } else {
           if (stressBox) stressBox.classList.add('hidden');
@@ -1905,6 +2247,147 @@
 
     function openAlertModal() { document.getElementById('alertModal').classList.remove('hidden'); }
     function closeAlertModal() { document.getElementById('alertModal').classList.add('hidden'); }
+
+    // ========================================================
+    // FIRST-TIME BORROWER GUIDE MODAL CONTROLS
+    // ========================================================
+    function openInvestorGuideModal() {
+      const modal = document.getElementById('modalGuide');
+      if (modal) modal.classList.remove('hidden');
+      switchGuideTab('ltv');
+      lucide.createIcons();
+    }
+
+    function closeInvestorGuideModal() {
+      const modal = document.getElementById('modalGuide');
+      if (modal) modal.classList.add('hidden');
+    }
+
+    function switchGuideTab(tabId) {
+      const tabs = ['ltv', 'rights', 'beta', 'pledge'];
+      tabs.forEach(t => {
+        const sec = document.getElementById('guideSection' + t.charAt(0).toUpperCase() + t.slice(1));
+        const btn = document.getElementById('btnTabGuide' + t.charAt(0).toUpperCase() + t.slice(1));
+        if (sec) sec.classList.add('hidden');
+        if (btn) {
+          btn.className = "flex-1 py-1.5 px-2 rounded-lg text-slate-600 hover:text-slate-900 cursor-pointer";
+        }
+      });
+
+      const activeSec = document.getElementById('guideSection' + tabId.charAt(0).toUpperCase() + tabId.slice(1));
+      const activeBtn = document.getElementById('btnTabGuide' + tabId.charAt(0).toUpperCase() + tabId.slice(1));
+      if (activeSec) activeSec.classList.remove('hidden');
+      if (activeBtn) {
+        activeBtn.className = "flex-1 py-1.5 px-2 rounded-lg bg-white text-slate-900 shadow-xs cursor-pointer";
+      }
+      lucide.createIcons();
+    }
+
+    // ========================================================
+    // CONTEXTUAL QUICK TOOLTIPS SYSTEM
+    // ========================================================
+    const TOOLTIP_DATA = {
+      ltv: {
+        title_en: "Loan-to-Value (LTV) Ratio",
+        title_hi: "लोन-टू-वैल्यू (एलटीवी) अनुपात",
+        body_en: "Formula: (Loan ÷ Collateral Market Value) × 100. If your pledged stock prices drop, the denominator shrinks and LTV automatically rises towards the bank's warning line.",
+        body_hi: "सूत्र: (लिया गया लोन ÷ गिरवी शेयरों का बाज़ार मूल्य) × १००। यदि शेयर भाव गिरते हैं, तो लोन वही रहने पर भी एलटीवी प्रतिशत बढ़ जाता है।"
+      },
+      buffer: {
+        title_en: "Market Drop Buffer",
+        title_hi: "मार्जिन कॉल तक सुरक्षा कुशन",
+        body_en: "The exact market percentage drop your portfolio can absorb before hitting the bank's 65% warning threshold. Higher buffer means greater peace of mind.",
+        body_hi: "बाज़ार में वह अधिकतम प्रतिशत गिरावट जिसे आपका पोर्टफोलियो ६५% मार्जिन कॉल आने से पहले सुरक्षित रूप से सहन कर सकता है।"
+      },
+      beta: {
+        title_en: "Portfolio Volatility (Beta)",
+        title_hi: "पोर्टफोलियो संवेदनशीलता (बीटा)",
+        body_en: "Measures sensitivity compared to Nifty 50 (Beta = 1.0). A Beta of 1.8 means if Nifty falls 10%, your pledged portfolio will plunge approximately 18%.",
+        body_hi: "निफ्टी ५० (बीटा = १.०) की तुलना में संवेदनशीलता। १.८ बीटा का अर्थ है कि निफ्टी १०% गिरने पर आपका पोर्टफोलियो लगभग १८% गिरेगा।"
+      },
+      hhi: {
+        title_en: "HHI Concentration Index",
+        title_hi: "संकेंद्रण जोखिम सूचकांक (HHI)",
+        body_en: "Herfindahl-Hirschman Index measures diversification. Score > 2,500 means dangerous reliance on a single stock; < 1,500 means healthy diversification.",
+        body_hi: "यह सूचकांक दर्शाता है कि आपका लोन किसी एक शेयर पर कितना निर्भर है। २५०० से अधिक अंक उच्च जोखिम दर्शाते हैं, जबकि १५०० से कम संतुलित हैं।"
+      },
+      interest: {
+        title_en: "Estimated Monthly Interest",
+        title_hi: "अनुमानित मासिक ब्याज भार",
+        body_en: "Estimated at benchmark 10.5% p.a. LAS rate. Prepaying part of the loan lowers this monthly cost immediately and permanently.",
+        body_hi: "१०.५% वार्षिक मानक दर पर अनुमानित। लोन का आंशिक भुगतान करने पर आपका यह मासिक ब्याज भार तुरंत कम हो जाता है।"
+      },
+      haircut: {
+        title_en: "Collateral Haircut",
+        title_hi: "शेयर हेयरकट (सुरक्षा मार्जिन)",
+        body_en: "The regulatory discount deducted from share price. A 30% haircut means ₹100 of stock provides ₹70 of collateral value to absorb day-to-day volatility.",
+        body_hi: "शेयर के बाज़ार भाव से काटा गया विनियामक सुरक्षा मार्जिन। ३०% हेयरकट का अर्थ है कि ₹१०० के शेयर पर बैंक ₹७० की गिरवी क्षमता मानता है।"
+      },
+      zero_cash: {
+        title_en: "Zero-Cash Demat OTP Pledge",
+        title_hi: "बिना नकद डीमैट ओटीपी गिरवी",
+        body_en: "Under SEBI & NSDL rules, you can pledge spare shares or debt mutual fund units via instant OTP. Zero cash required, and you keep 100% of dividends and bonuses.",
+        body_hi: "सेबी व एनएसडीएल नियमों के तहत अतिरिक्त शेयर या डेट फंड बिना नकद खर्च किए त्वरित ओटीपी से गिरवी रखे जा सकते हैं। डिविडेंड आपका ही रहता है।"
+      },
+      per_stock: {
+        title_en: "Beta-Weighted Crash Impact",
+        title_hi: "बीटा-आधारित शेयर गिरावट प्रभाव",
+        body_en: "Each stock drops at: Market Fall × Stock Beta. High-beta smallcaps suffer disproportionately heavier wealth loss than defensive largecaps.",
+        body_hi: "प्रत्येक शेयर की गिरावट = बाज़ार गिरावट × शेयर बीटा। उच्च-बीटा वाले स्मॉलकैप शेयर बाज़ार से कहीं अधिक तेज़ी से गिरते हैं।"
+      }
+    };
+
+    function showQuickTooltip(topic, event) {
+      if (event) {
+        event.stopPropagation();
+      }
+      const data = TOOLTIP_DATA[topic];
+      if (!data) return;
+
+      const popover = document.getElementById('quickTooltipPopover');
+      const titleEl = document.getElementById('tooltipTitle');
+      const bodyEl = document.getElementById('tooltipBody');
+
+      titleEl.innerText = currentLang === 'hi' ? data.title_hi : data.title_en;
+      bodyEl.innerText = currentLang === 'hi' ? data.body_hi : data.body_en;
+
+      popover.classList.remove('hidden');
+
+      if (event && event.target) {
+        const rect = event.target.getBoundingClientRect();
+        const top = Math.min(window.innerHeight - 190, Math.max(20, rect.bottom + 8));
+        const left = Math.min(window.innerWidth - 320, Math.max(16, rect.left - 60));
+        popover.style.top = `${top}px`;
+        popover.style.left = `${left}px`;
+      }
+    }
+
+    function closeQuickTooltip() {
+      const popover = document.getElementById('quickTooltipPopover');
+      if (popover) popover.classList.add('hidden');
+    }
+
+    // Dismiss tooltip on document click outside
+    document.addEventListener('click', (e) => {
+      const popover = document.getElementById('quickTooltipPopover');
+      if (popover && !popover.classList.contains('hidden')) {
+        if (!popover.contains(e.target) && !e.target.closest('button[onclick*="showQuickTooltip"]')) {
+          closeQuickTooltip();
+        }
+      }
+    });
+
+    // ========================================================
+    // PRINT RESILIENCE REPORT
+    // ========================================================
+    function printResilienceReport() {
+      const allPanels = document.querySelectorAll('.view-panel');
+      allPanels.forEach(p => p.classList.remove('hidden'));
+      window.print();
+      setTimeout(() => {
+        navigateToView(currentView);
+      }, 500);
+    }
 
     // CUSTOM PORTFOLIO BUILDER
     function openCustomPortfolioModal() {
